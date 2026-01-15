@@ -106,6 +106,153 @@ struct JSONViewIntegrationTests {
     #expect(view != nil)
   }
 
+  @Test("Render balance card")
+  func testRenderBalanceCard() throws {
+    let json = """
+      {"type": "BalanceCard", "props": {"brl": 1245032, "btc": 234000, "showChange": true, "brlChange": 5.2}}
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render transaction row")
+  func testRenderTransactionRow() throws {
+    let json = """
+      {"type": "TransactionRow", "props": {"description": "PIX", "amount": -50000, "date": "2026-01-14"}}
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render transaction list")
+  func testRenderTransactionList() throws {
+    let json = """
+      {
+        "type": "TransactionList",
+        "props": {
+          "transactions": [
+            { "description": "PIX", "amount": -50000, "date": "2026-01-14" },
+            { "description": "Salary", "amount": 500000, "date": "2026-01-10" }
+          ]
+        }
+      }
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render asset price")
+  func testRenderAssetPrice() throws {
+    let json = """
+      {"type": "AssetPrice", "props": {"symbol": "BTC", "price": 180000.23, "changePercent": 1.28}}
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render pie chart")
+  func testRenderPieChart() throws {
+    let json = """
+      {
+        "type": "PieChart",
+        "props": {
+          "title": "Spending",
+          "segments": [
+            { "label": "Food", "value": 45000, "color": "#FF6B6B" },
+            { "label": "Transport", "value": 22000, "color": "#4ECDC4" }
+          ]
+        }
+      }
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render line chart")
+  func testRenderLineChart() throws {
+    let json = """
+      {
+        "type": "LineChart",
+        "props": {
+          "title": "Portfolio",
+          "points": [
+            { "x": "2026-01-10", "y": 120000 },
+            { "x": "2026-01-11", "y": 124000 }
+          ]
+        }
+      }
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render amount input")
+  func testRenderAmountInput() throws {
+    let json = """
+      {
+        "type": "AmountInput",
+        "props": { "label": "Amount", "placeholder": "0,00", "currency": "BRL" }
+      }
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render confirm dialog")
+  func testRenderConfirmDialog() throws {
+    let json = """
+      {
+        "type": "ConfirmDialog",
+        "props": {
+          "title": "Confirm",
+          "message": "Proceed?",
+          "confirmLabel": "Yes",
+          "cancelLabel": "No",
+          "triggerLabel": "Open"
+        }
+      }
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render choice list")
+  func testRenderChoiceList() throws {
+    let json = """
+      {
+        "type": "ChoiceList",
+        "props": {
+          "question": "Choose one",
+          "options": [
+            { "id": "a", "label": "Option A" },
+            { "id": "b", "label": "Option B" }
+          ],
+          "action": { "name": "select", "paramKey": "id" }
+        }
+      }
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
   @Test("Render button with action")
   func testRenderButtonWithAction() throws {
     let view = JSONView(TestJSON.buttonWithAction)
@@ -512,7 +659,7 @@ struct JSONViewIntegrationTests {
 
   // MARK: - Built-in Module
 
-  @Test("BuiltInComponentsModule has all Phase 2 components")
+  @Test("BuiltInComponentsModule has all Phase 3 components")
   func testBuiltInModuleComponents() throws {
     let module = BuiltInComponentsModule()
     let builders = module.builders
@@ -527,9 +674,18 @@ struct JSONViewIntegrationTests {
     #expect(typeNames.contains("Heading"))
     #expect(typeNames.contains("Image"))
     #expect(typeNames.contains("Icon"))
+    #expect(typeNames.contains("BalanceCard"))
+    #expect(typeNames.contains("TransactionRow"))
+    #expect(typeNames.contains("TransactionList"))
+    #expect(typeNames.contains("AssetPrice"))
+    #expect(typeNames.contains("PieChart"))
+    #expect(typeNames.contains("LineChart"))
+    #expect(typeNames.contains("AmountInput"))
+    #expect(typeNames.contains("ConfirmDialog"))
+    #expect(typeNames.contains("ChoiceList"))
     #expect(typeNames.contains("Button"))
     #expect(typeNames.contains("Alert"))
-    #expect(builders.count == 10)
+    #expect(builders.count == 19)
   }
 
   // MARK: - Complete Workflow
