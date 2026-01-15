@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 
 @testable import SwiftUIJSONRender
@@ -5,13 +6,12 @@ import Testing
 @Suite("ComponentNode Tests")
 struct ComponentNodeTests {
 
-  @Test("Parses simple component from JSON")
-  func parsesSimpleComponent() throws {
+  // MARK: - JSON Parsing
+
+  @Test("Parse simple JSON with type and props")
+  func testParseSimpleJSON() throws {
     let json = """
-      {
-          "type": "Text",
-          "props": { "content": "Hello" }
-      }
+      {"type": "Text", "props": {"content": "Hello"}}
       """
 
     let node = ComponentNode.from(json: json)
@@ -19,17 +19,18 @@ struct ComponentNodeTests {
     #expect(node != nil)
     #expect(node?.type == "Text")
     #expect(node?.string("content") == "Hello")
+    #expect(node?.children == nil)
   }
 
-  @Test("Parses component with children")
-  func parsesComponentWithChildren() throws {
+  @Test("Parse JSON with nested children")
+  func testParseNestedChildren() throws {
     let json = """
       {
           "type": "Stack",
-          "props": { "direction": "vertical" },
+          "props": {"direction": "vertical"},
           "children": [
-              { "type": "Text", "props": { "content": "First" } },
-              { "type": "Text", "props": { "content": "Second" } }
+              {"type": "Text", "props": {"content": "Line 1"}},
+              {"type": "Text", "props": {"content": "Line 2"}}
           ]
       }
       """
@@ -40,81 +41,205 @@ struct ComponentNodeTests {
     #expect(node?.type == "Stack")
     #expect(node?.children?.count == 2)
     #expect(node?.children?[0].type == "Text")
-    #expect(node?.children?[0].string("content") == "First")
+    #expect(node?.children?[0].string("content") == "Line 1")
+    #expect(node?.children?[1].string("content") == "Line 2")
   }
 
-  @Test("Returns nil for invalid JSON")
-  func returnsNilForInvalidJSON() {
-    let json = "{ invalid json }"
-    let node = ComponentNode.from(json: json)
-
-    #expect(node == nil)
-  }
-
-  @Test("Parses component without props")
-  func parsesComponentWithoutProps() {
+  @Test("Parse JSON with empty children array")
+  func testParseEmptyChildren() throws {
     let json = """
-      { "type": "Spacer" }
+      {"type": "Stack", "children": []}
       """
 
     let node = ComponentNode.from(json: json)
 
     #expect(node != nil)
-    #expect(node?.type == "Spacer")
-    #expect(node?.props == nil)
+    #expect(node?.type == "Stack")
+    #expect(node?.children != nil)
+    #expect(node?.children?.isEmpty == true)
   }
 
-  @Test("Property accessors work correctly")
-  func propertyAccessorsWork() {
+  @Test("Parse JSON with missing children (null)")
+  func testParseNullChildren() throws {
     let json = """
-      {
-          "type": "Test",
-          "props": {
-              "stringProp": "hello",
-              "intProp": 42,
-              "doubleProp": 3.14,
-              "boolProp": true
-          }
-      }
+      {"type": "Text", "props": {"content": "Hello"}}
       """
 
-    let node = ComponentNode.from(json: json)!
+    let node = ComponentNode.from(json: json)
 
-    #expect(node.string("stringProp") == "hello")
-    #expect(node.int("intProp") == 42)
-    #expect(node.double("doubleProp") == 3.14)
-    #expect(node.bool("boolProp") == true)
+    #expect(node != nil)
+    #expect(node?.children == nil)
   }
 
-  @Test("Default values work correctly")
-  func defaultValuesWork() {
+  @Test("Invalid JSON returns nil")
+  func testInvalidJSONReturnsNil() throws {
+    let invalidJSON = "{ invalid json }"
+
+    let node = ComponentNode.from(json: invalidJSON)
+
+    #expect(node == nil)
+  }
+
+  @Test("Parse from Data")
+  func testParseFromData() throws {
     let json = """
-      { "type": "Test", "props": {} }
+      {"type": "Button", "props": {"label": "Click"}}
       """
+    let data = json.data(using: .utf8)!
 
-    let node = ComponentNode.from(json: json)!
+    let node = ComponentNode.from(data: data)
 
-    #expect(node.string("missing", default: "default") == "default")
-    #expect(node.int("missing", default: 10) == 10)
-    #expect(node.double("missing", default: 1.5) == 1.5)
-    #expect(node.bool("missing", default: false) == false)
+    #expect(node != nil)
+    #expect(node?.type == "Button")
+    #expect(node?.string("label") == "Click")
   }
 
-  @Test("Deeply nested structure parses correctly")
-  func deeplyNestedStructure() {
+  // MARK: - Property Accessors
+
+  @Test("String property accessor")
+  func testStringPropertyAccessor() throws {
+    let node = ComponentNode(
+      type: "Text",
+      props: ["content": "Hello World"]
+    )
+
+    #expect(node.string("content") == "Hello World")
+    #expect(node.string("nonexistent") == nil)
+  }
+
+  @Test("Int property accessor")
+  func testIntPropertyAccessor() throws {
+    let node = ComponentNode(
+      type: "Stack",
+      props: ["spacing": 16]
+    )
+
+    #expect(node.int("spacing") == 16)
+    #expect(node.int("nonexistent") == nil)
+  }
+
+  @Test("Double property accessor")
+  func testDoublePropertyAccessor() throws {
+    let node = ComponentNode(
+      type: "Card",
+      props: ["cornerRadius": 12.5]
+    )
+
+    #expect(node.double("cornerRadius") == 12.5)
+    #expect(node.double("nonexistent") == nil)
+  }
+
+  @Test("Bool property accessor")
+  func testBoolPropertyAccessor() throws {
+    let node = ComponentNode(
+      type: "Button",
+      props: ["disabled": true]
+    )
+
+    #expect(node.bool("disabled") == true)
+    #expect(node.bool("nonexistent") == nil)
+  }
+
+  @Test("Array property accessor")
+  func testArrayPropertyAccessor() throws {
+    let node = ComponentNode(
+      type: "List",
+      props: ["items": ["a", "b", "c"]]
+    )
+
+    let items = node.array("items")
+    #expect(items != nil)
+    #expect(items?.count == 3)
+    #expect(items?[0] as? String == "a")
+  }
+
+  @Test("Dictionary property accessor")
+  func testDictionaryPropertyAccessor() throws {
+    let node = ComponentNode(
+      type: "Button",
+      props: ["action": ["name": "submit", "id": 123]]
+    )
+
+    let action = node.dictionary("action")
+    #expect(action != nil)
+    #expect(action?["name"] as? String == "submit")
+    #expect(action?["id"] as? Int == 123)
+  }
+
+  // MARK: - Default Values
+
+  @Test("String with default value")
+  func testStringWithDefault() throws {
+    let node = ComponentNode(type: "Stack", props: nil)
+
+    #expect(node.string("direction", default: "vertical") == "vertical")
+  }
+
+  @Test("Int with default value")
+  func testIntWithDefault() throws {
+    let node = ComponentNode(type: "Stack", props: nil)
+
+    #expect(node.int("spacing", default: 8) == 8)
+  }
+
+  @Test("Double with default value")
+  func testDoubleWithDefault() throws {
+    let node = ComponentNode(type: "Card", props: nil)
+
+    #expect(node.double("padding", default: 16.0) == 16.0)
+  }
+
+  @Test("Bool with default value")
+  func testBoolWithDefault() throws {
+    let node = ComponentNode(type: "Button", props: nil)
+
+    #expect(node.bool("disabled", default: false) == false)
+  }
+
+  @Test("Default used when key exists but wrong type")
+  func testDefaultUsedForWrongType() throws {
+    let node = ComponentNode(
+      type: "Stack",
+      props: ["spacing": "not a number"]
+    )
+
+    #expect(node.int("spacing", default: 8) == 8)
+  }
+
+  // MARK: - Equatable
+
+  @Test("ComponentNode equatable")
+  func testEquatable() throws {
+    let node1 = ComponentNode(
+      type: "Text",
+      props: ["content": "Hello"]
+    )
+    let node2 = ComponentNode(
+      type: "Text",
+      props: ["content": "Hello"]
+    )
+    let node3 = ComponentNode(
+      type: "Text",
+      props: ["content": "World"]
+    )
+
+    #expect(node1 == node2)
+    #expect(node1 != node3)
+  }
+
+  // MARK: - Complex Parsing
+
+  @Test("Parse deeply nested structure")
+  func testParseDeepStructure() throws {
     let json = """
       {
           "type": "Stack",
           "children": [
               {
                   "type": "Card",
+                  "props": {"title": "Nested"},
                   "children": [
-                      {
-                          "type": "Stack",
-                          "children": [
-                              { "type": "Text", "props": { "content": "Deep" } }
-                          ]
-                      }
+                      {"type": "Text", "props": {"content": "Deep"}}
                   ]
               }
           ]
@@ -124,18 +249,37 @@ struct ComponentNodeTests {
     let node = ComponentNode.from(json: json)
 
     #expect(node != nil)
-    let deepText = node?.children?[0].children?[0].children?[0]
-    #expect(deepText?.type == "Text")
-    #expect(deepText?.string("content") == "Deep")
+    #expect(node?.type == "Stack")
+    #expect(node?.children?[0].type == "Card")
+    #expect(node?.children?[0].string("title") == "Nested")
+    #expect(node?.children?[0].children?[0].type == "Text")
+    #expect(node?.children?[0].children?[0].string("content") == "Deep")
   }
 
-  @Test("Equatable conformance works")
-  func equatableConformance() {
-    let node1 = ComponentNode(type: "Text", props: ["content": "hello"])
-    let node2 = ComponentNode(type: "Text", props: ["content": "hello"])
-    let node3 = ComponentNode(type: "Text", props: ["content": "world"])
+  @Test("Parse mixed prop types")
+  func testParseMixedPropTypes() throws {
+    let json = """
+      {
+          "type": "Custom",
+          "props": {
+              "stringProp": "hello",
+              "intProp": 42,
+              "doubleProp": 3.14,
+              "boolProp": true,
+              "arrayProp": [1, 2, 3],
+              "objectProp": {"key": "value"}
+          }
+      }
+      """
 
-    #expect(node1 == node2)
-    #expect(node1 != node3)
+    let node = ComponentNode.from(json: json)
+
+    #expect(node != nil)
+    #expect(node?.string("stringProp") == "hello")
+    #expect(node?.int("intProp") == 42)
+    #expect(node?.double("doubleProp") == 3.14)
+    #expect(node?.bool("boolProp") == true)
+    #expect(node?.array("arrayProp")?.count == 3)
+    #expect(node?.dictionary("objectProp")?["key"] as? String == "value")
   }
 }

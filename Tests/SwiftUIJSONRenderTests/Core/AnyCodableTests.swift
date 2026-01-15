@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 
 @testable import SwiftUIJSONRender
@@ -5,115 +6,338 @@ import Testing
 @Suite("AnyCodable Tests")
 struct AnyCodableTests {
 
-  @Test("Decodes string values")
-  func decodesStringValues() throws {
-    let json = #"{"value": "hello"}"#
+  // MARK: - Decoding
+
+  @Test("Decode null value")
+  func testDecodeNull() throws {
+    let json = """
+      {"value": null}
+      """
     let data = json.data(using: .utf8)!
-    let decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
 
-    #expect(decoded["value"]?.stringValue == "hello")
+    struct Container: Codable {
+      let value: AnyCodable
+    }
+
+    let container = try JSONDecoder().decode(Container.self, from: data)
+
+    #expect(container.value.value is NSNull)
   }
 
-  @Test("Decodes integer values")
-  func decodesIntegerValues() throws {
-    let json = #"{"value": 42}"#
+  @Test("Decode bool values")
+  func testDecodeBool() throws {
+    let jsonTrue = """
+      {"value": true}
+      """
+    let jsonFalse = """
+      {"value": false}
+      """
+
+    struct Container: Codable {
+      let value: AnyCodable
+    }
+
+    let trueContainer = try JSONDecoder().decode(
+      Container.self, from: jsonTrue.data(using: .utf8)!)
+    let falseContainer = try JSONDecoder().decode(
+      Container.self, from: jsonFalse.data(using: .utf8)!)
+
+    #expect(trueContainer.value.boolValue == true)
+    #expect(falseContainer.value.boolValue == false)
+  }
+
+  @Test("Decode int value")
+  func testDecodeInt() throws {
+    let json = """
+      {"value": 42}
+      """
     let data = json.data(using: .utf8)!
-    let decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
 
-    #expect(decoded["value"]?.intValue == 42)
+    struct Container: Codable {
+      let value: AnyCodable
+    }
+
+    let container = try JSONDecoder().decode(Container.self, from: data)
+
+    #expect(container.value.intValue == 42)
   }
 
-  @Test("Decodes double values")
-  func decodesDoubleValues() throws {
-    let json = #"{"value": 3.14}"#
+  @Test("Decode double value")
+  func testDecodeDouble() throws {
+    let json = """
+      {"value": 3.14159}
+      """
     let data = json.data(using: .utf8)!
-    let decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
 
-    #expect(decoded["value"]?.doubleValue == 3.14)
+    struct Container: Codable {
+      let value: AnyCodable
+    }
+
+    let container = try JSONDecoder().decode(Container.self, from: data)
+
+    #expect(container.value.doubleValue == 3.14159)
   }
 
-  @Test("Decodes boolean values")
-  func decodesBooleanValues() throws {
-    let json = #"{"value": true}"#
+  @Test("Decode string value")
+  func testDecodeString() throws {
+    let json = """
+      {"value": "Hello, World!"}
+      """
     let data = json.data(using: .utf8)!
-    let decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
 
-    #expect(decoded["value"]?.boolValue == true)
+    struct Container: Codable {
+      let value: AnyCodable
+    }
+
+    let container = try JSONDecoder().decode(Container.self, from: data)
+
+    #expect(container.value.stringValue == "Hello, World!")
   }
 
-  @Test("Decodes array values")
-  func decodesArrayValues() throws {
-    let json = #"{"value": [1, 2, 3]}"#
+  @Test("Decode array of mixed types")
+  func testDecodeArray() throws {
+    let json = """
+      {"value": [1, "two", true, 3.14]}
+      """
     let data = json.data(using: .utf8)!
-    let decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
 
-    let array = decoded["value"]?.arrayValue as? [Int]
-    #expect(array == [1, 2, 3])
+    struct Container: Codable {
+      let value: AnyCodable
+    }
+
+    let container = try JSONDecoder().decode(Container.self, from: data)
+    let array = container.value.arrayValue
+
+    #expect(array != nil)
+    #expect(array?.count == 4)
+    #expect(array?[0] as? Int == 1)
+    #expect(array?[1] as? String == "two")
+    #expect(array?[2] as? Bool == true)
   }
 
-  @Test("Decodes nested dictionary values")
-  func decodesNestedDictionary() throws {
-    let json = #"{"outer": {"inner": "value"}}"#
+  @Test("Decode nested dictionary")
+  func testDecodeDictionary() throws {
+    let json = """
+      {"value": {"name": "John", "age": 30, "active": true}}
+      """
     let data = json.data(using: .utf8)!
-    let decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
 
-    let nested = decoded["outer"]?.dictionaryValue
-    #expect(nested?["inner"] as? String == "value")
+    struct Container: Codable {
+      let value: AnyCodable
+    }
+
+    let container = try JSONDecoder().decode(Container.self, from: data)
+    let dict = container.value.dictionaryValue
+
+    #expect(dict != nil)
+    #expect(dict?["name"] as? String == "John")
+    #expect(dict?["age"] as? Int == 30)
+    #expect(dict?["active"] as? Bool == true)
   }
 
-  @Test("Decodes null values")
-  func decodesNullValues() throws {
-    let json = #"{"value": null}"#
-    let data = json.data(using: .utf8)!
-    let decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
+  // MARK: - Type Coercion
 
-    #expect(decoded["value"]?.stringValue == nil)
-    #expect(decoded["value"]?.intValue == nil)
+  @Test("Int value from double (truncates)")
+  func testIntToDoubleCoercion() throws {
+    let anyCodable = AnyCodable(3.7)
+
+    #expect(anyCodable.intValue == 3)
   }
 
-  @Test("Encodes and decodes round trip")
-  func encodesAndDecodesRoundTrip() throws {
-    let original: [String: AnyCodable] = [
-      "string": "hello",
-      "int": 42,
-      "double": 3.14,
-      "bool": true,
-      "array": [1, 2, 3],
-      "nested": ["key": "value"],
-    ]
+  @Test("Double value from int (promotes)")
+  func testDoubleToIntCoercion() throws {
+    let anyCodable = AnyCodable(42)
 
-    let data = try JSONEncoder().encode(original)
-    let decoded = try JSONDecoder().decode([String: AnyCodable].self, from: data)
-
-    #expect(decoded["string"]?.stringValue == "hello")
-    #expect(decoded["int"]?.intValue == 42)
-    #expect(decoded["bool"]?.boolValue == true)
+    #expect(anyCodable.doubleValue == 42.0)
   }
 
-  @Test("Equality check works")
-  func equalityWorks() {
-    let a: AnyCodable = "hello"
-    let b: AnyCodable = "hello"
-    let c: AnyCodable = "world"
+  @Test("String value returns nil for non-string")
+  func testStringValueForNonString() throws {
+    let anyCodable = AnyCodable(42)
+
+    #expect(anyCodable.stringValue == nil)
+  }
+
+  @Test("Bool value returns nil for non-bool")
+  func testBoolValueForNonBool() throws {
+    let anyCodable = AnyCodable("true")
+
+    #expect(anyCodable.boolValue == nil)
+  }
+
+  // MARK: - Equatable
+
+  @Test("Equal values are equal")
+  func testEquatable() throws {
+    let a = AnyCodable("hello")
+    let b = AnyCodable("hello")
+    let c = AnyCodable("world")
 
     #expect(a == b)
     #expect(a != c)
   }
 
-  @Test("Literal initialization works")
-  func literalInitialization() {
-    let string: AnyCodable = "test"
-    let int: AnyCodable = 42
-    let double: AnyCodable = 3.14
-    let bool: AnyCodable = true
-    let array: AnyCodable = [1, 2, 3]
-    let dict: AnyCodable = ["key": "value"]
+  @Test("Equal ints are equal")
+  func testEquatableInts() throws {
+    let a = AnyCodable(42)
+    let b = AnyCodable(42)
+    let c = AnyCodable(43)
 
-    #expect(string.stringValue == "test")
-    #expect(int.intValue == 42)
-    #expect(double.doubleValue == 3.14)
-    #expect(bool.boolValue == true)
-    #expect(array.arrayValue != nil)
-    #expect(dict.dictionaryValue != nil)
+    #expect(a == b)
+    #expect(a != c)
+  }
+
+  @Test("Equal bools are equal")
+  func testEquatableBools() throws {
+    let a = AnyCodable(true)
+    let b = AnyCodable(true)
+    let c = AnyCodable(false)
+
+    #expect(a == b)
+    #expect(a != c)
+  }
+
+  @Test("Equal arrays are equal")
+  func testEquatableArrays() throws {
+    let a = AnyCodable([1, 2, 3])
+    let b = AnyCodable([1, 2, 3])
+    let c = AnyCodable([1, 2, 4])
+
+    #expect(a == b)
+    #expect(a != c)
+  }
+
+  @Test("Equal dictionaries are equal")
+  func testEquatableDictionaries() throws {
+    let a = AnyCodable(["key": "value"])
+    let b = AnyCodable(["key": "value"])
+    let c = AnyCodable(["key": "other"])
+
+    #expect(a == b)
+    #expect(a != c)
+  }
+
+  @Test("Different types are not equal")
+  func testNotEqualDifferentTypes() throws {
+    let string = AnyCodable("42")
+    let int = AnyCodable(42)
+
+    #expect(string != int)
+  }
+
+  // MARK: - Encoding
+
+  @Test("Round-trip encode/decode preserves string")
+  func testEncodeDecodeString() throws {
+    let original = AnyCodable("hello")
+    let data = try JSONEncoder().encode(original)
+    let decoded = try JSONDecoder().decode(AnyCodable.self, from: data)
+
+    #expect(decoded.stringValue == "hello")
+  }
+
+  @Test("Round-trip encode/decode preserves int")
+  func testEncodeDecodeInt() throws {
+    let original = AnyCodable(42)
+    let data = try JSONEncoder().encode(original)
+    let decoded = try JSONDecoder().decode(AnyCodable.self, from: data)
+
+    #expect(decoded.intValue == 42)
+  }
+
+  @Test("Round-trip encode/decode preserves array")
+  func testEncodeDecodeArray() throws {
+    let original = AnyCodable([1, 2, 3])
+    let data = try JSONEncoder().encode(original)
+    let decoded = try JSONDecoder().decode(AnyCodable.self, from: data)
+
+    let array = decoded.arrayValue
+    #expect(array?.count == 3)
+  }
+
+  @Test("Round-trip encode/decode preserves dictionary")
+  func testEncodeDecodeDictionary() throws {
+    let original = AnyCodable(["name": "John", "age": 30])
+    let data = try JSONEncoder().encode(original)
+    let decoded = try JSONDecoder().decode(AnyCodable.self, from: data)
+
+    let dict = decoded.dictionaryValue
+    #expect(dict?["name"] as? String == "John")
+    #expect(dict?["age"] as? Int == 30)
+  }
+
+  // MARK: - Literal Expressible
+
+  @Test("ExpressibleByNilLiteral")
+  func testNilLiteral() throws {
+    let value: AnyCodable = nil
+
+    #expect(value.value is NSNull)
+  }
+
+  @Test("ExpressibleByBooleanLiteral")
+  func testBoolLiteral() throws {
+    let value: AnyCodable = true
+
+    #expect(value.boolValue == true)
+  }
+
+  @Test("ExpressibleByIntegerLiteral")
+  func testIntLiteral() throws {
+    let value: AnyCodable = 42
+
+    #expect(value.intValue == 42)
+  }
+
+  @Test("ExpressibleByFloatLiteral")
+  func testFloatLiteral() throws {
+    let value: AnyCodable = 3.14
+
+    #expect(value.doubleValue == 3.14)
+  }
+
+  @Test("ExpressibleByStringLiteral")
+  func testStringLiteral() throws {
+    let value: AnyCodable = "hello"
+
+    #expect(value.stringValue == "hello")
+  }
+
+  @Test("ExpressibleByArrayLiteral")
+  func testArrayLiteral() throws {
+    let value: AnyCodable = [1, 2, 3]
+
+    #expect(value.arrayValue?.count == 3)
+  }
+
+  @Test("ExpressibleByDictionaryLiteral")
+  func testDictionaryLiteral() throws {
+    let value: AnyCodable = ["key": "value"]
+
+    #expect(value.dictionaryValue?["key"] as? String == "value")
+  }
+
+  // MARK: - AnyCodable Array/Dictionary Accessors
+
+  @Test("anyCodableArray accessor")
+  func testAnyCodableArray() throws {
+    let value = AnyCodable([1, "two", true])
+    let array = value.anyCodableArray
+
+    #expect(array != nil)
+    #expect(array?.count == 3)
+    #expect(array?[0].intValue == 1)
+    #expect(array?[1].stringValue == "two")
+    #expect(array?[2].boolValue == true)
+  }
+
+  @Test("anyCodableDictionary accessor")
+  func testAnyCodableDictionary() throws {
+    let value = AnyCodable(["name": "John", "count": 5])
+    let dict = value.anyCodableDictionary
+
+    #expect(dict != nil)
+    #expect(dict?["name"]?.stringValue == "John")
+    #expect(dict?["count"]?.intValue == 5)
   }
 }
