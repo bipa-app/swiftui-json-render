@@ -5,6 +5,8 @@
 [![macOS 13+](https://img.shields.io/badge/macOS-13+-blue.svg)](https://developer.apple.com/macos/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+> **Alpha Release** - This library is currently in alpha (v0.1.0-alpha). The API may change between releases and it may contain bugs. Use in production at your own risk. Feedback and bug reports are welcome!
+
 A Swift library for rendering JSON-defined UI into native SwiftUI views. Designed for AI-generated interfaces, server-driven UI, and dynamic content rendering.
 
 ## Features
@@ -26,7 +28,7 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/bipa-app/swiftui-json-render.git", from: "1.0.0")
+    .package(url: "https://github.com/bipa-app/swiftui-json-render.git", from: "0.1.0-alpha")
 ]
 ```
 
