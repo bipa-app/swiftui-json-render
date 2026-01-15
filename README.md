@@ -392,6 +392,10 @@ if result.isValid {
 }
 ```
 
+## Schema
+
+The exported schema is available at `schema.json` for server-side validation and tooling.
+
 ## Actions
 
 Interactive components can emit actions:
@@ -408,3 +412,10 @@ JSONView(json)
     }
   }
 ```
+
+## Example App
+
+A lightweight SwiftUI example is available under `Example/SwiftUIJSONRenderExample` and demonstrates:
+- Rendering a full JSON tree
+- Action handling callbacks
+- Streaming JSON updates

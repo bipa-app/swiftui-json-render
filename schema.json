@@ -1,0 +1,269 @@
+{
+  "version": "0.1.0",
+  "components": [
+    {
+      "type": "Stack",
+      "children": true,
+      "props": [
+        { "name": "direction", "type": "string", "enumValues": ["vertical", "horizontal"] },
+        { "name": "spacing", "type": "number" },
+        { "name": "alignment", "type": "string", "enumValues": ["leading", "center", "trailing"] }
+      ]
+    },
+    {
+      "type": "Card",
+      "children": true,
+      "props": [
+        { "name": "title", "type": "string" },
+        { "name": "padding", "type": "number" },
+        { "name": "cornerRadius", "type": "number" }
+      ]
+    },
+    {
+      "type": "Divider",
+      "children": false,
+      "props": [
+        { "name": "orientation", "type": "string", "enumValues": ["horizontal", "vertical"] },
+        { "name": "thickness", "type": "number" },
+        { "name": "color", "type": "string" },
+        { "name": "padding", "type": "number" },
+        { "name": "length", "type": "number" }
+      ]
+    },
+    {
+      "type": "Spacer",
+      "children": false,
+      "props": [
+        { "name": "size", "type": "number" }
+      ]
+    },
+    {
+      "type": "Text",
+      "children": false,
+      "props": [
+        { "name": "content", "type": "string", "required": true },
+        {
+          "name": "style",
+          "type": "string",
+          "enumValues": ["body", "caption", "footnote", "headline", "title", "largeTitle", "subheadline"]
+        },
+        {
+          "name": "weight",
+          "type": "string",
+          "enumValues": ["regular", "medium", "semibold", "bold", "heavy", "light", "thin"]
+        },
+        { "name": "color", "type": "string" }
+      ]
+    },
+    {
+      "type": "Heading",
+      "children": false,
+      "props": [
+        { "name": "text", "type": "string", "required": true },
+        { "name": "level", "type": "integer" }
+      ]
+    },
+    {
+      "type": "Image",
+      "children": false,
+      "props": [
+        { "name": "url", "type": "string" },
+        { "name": "name", "type": "string" },
+        { "name": "contentMode", "type": "string", "enumValues": ["fit", "fill"] },
+        { "name": "width", "type": "number" },
+        { "name": "height", "type": "number" }
+      ]
+    },
+    {
+      "type": "Icon",
+      "children": false,
+      "props": [
+        { "name": "name", "type": "string", "required": true },
+        { "name": "size", "type": "number" },
+        { "name": "color", "type": "string" }
+      ]
+    },
+    {
+      "type": "BalanceCard",
+      "children": false,
+      "props": [
+        { "name": "brl", "type": "integer", "required": true },
+        { "name": "btc", "type": "integer", "required": true },
+        { "name": "usdt", "type": "integer" },
+        { "name": "showChange", "type": "boolean" },
+        { "name": "brlChange", "type": "number" }
+      ]
+    },
+    {
+      "type": "TransactionRow",
+      "children": false,
+      "props": [
+        { "name": "id", "type": "string" },
+        { "name": "description", "type": "string" },
+        { "name": "amount", "type": "integer" },
+        { "name": "date", "type": "string" },
+        { "name": "category", "type": "string" },
+        { "name": "icon", "type": "string" }
+      ]
+    },
+    {
+      "type": "TransactionList",
+      "children": false,
+      "props": [
+        {
+          "name": "transactions",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": [
+              { "name": "id", "type": "string" },
+              { "name": "description", "type": "string" },
+              { "name": "amount", "type": "integer" },
+              { "name": "date", "type": "string" },
+              { "name": "category", "type": "string" },
+              { "name": "icon", "type": "string" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "AssetPrice",
+      "children": false,
+      "props": [
+        { "name": "symbol", "type": "string" },
+        { "name": "price", "type": "number" },
+        { "name": "change", "type": "number" },
+        { "name": "changePercent", "type": "number" }
+      ]
+    },
+    {
+      "type": "PieChart",
+      "children": false,
+      "props": [
+        { "name": "title", "type": "string" },
+        { "name": "showLegend", "type": "boolean" },
+        {
+          "name": "segments",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": [
+              { "name": "label", "type": "string" },
+              { "name": "value", "type": "number" },
+              { "name": "color", "type": "string" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "LineChart",
+      "children": false,
+      "props": [
+        { "name": "title", "type": "string" },
+        { "name": "color", "type": "string" },
+        {
+          "name": "points",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": [
+              { "name": "x", "type": "string" },
+              { "name": "y", "type": "number" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "Button",
+      "children": false,
+      "props": [
+        { "name": "label", "type": "string", "required": true },
+        { "name": "style", "type": "string", "enumValues": ["primary", "secondary", "destructive"] },
+        { "name": "icon", "type": "string" },
+        { "name": "disabled", "type": "boolean" },
+        { "name": "action", "type": "object" }
+      ]
+    },
+    {
+      "type": "AmountInput",
+      "children": false,
+      "props": [
+        { "name": "label", "type": "string" },
+        { "name": "placeholder", "type": "string" },
+        { "name": "currency", "type": "string" },
+        { "name": "action", "type": "object" }
+      ]
+    },
+    {
+      "type": "ConfirmDialog",
+      "children": false,
+      "props": [
+        { "name": "title", "type": "string" },
+        { "name": "message", "type": "string" },
+        { "name": "confirmLabel", "type": "string" },
+        { "name": "cancelLabel", "type": "string" },
+        { "name": "triggerLabel", "type": "string" },
+        { "name": "action", "type": "object" }
+      ]
+    },
+    {
+      "type": "ChoiceList",
+      "children": false,
+      "props": [
+        { "name": "question", "type": "string" },
+        {
+          "name": "options",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": [
+              { "name": "id", "type": "string", "required": true },
+              { "name": "label", "type": "string", "required": true },
+              { "name": "description", "type": "string" }
+            ]
+          }
+        },
+        {
+          "name": "action",
+          "type": "object",
+          "properties": [
+            { "name": "name", "type": "string", "required": true },
+            { "name": "paramKey", "type": "string" }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Alert",
+      "children": false,
+      "props": [
+        { "name": "title", "type": "string" },
+        { "name": "message", "type": "string" },
+        { "name": "severity", "type": "string", "enumValues": ["info", "success", "warning", "error"] },
+        { "name": "dismissible", "type": "boolean" },
+        {
+          "name": "action",
+          "type": "object",
+          "properties": [
+            { "name": "label", "type": "string" },
+            { "name": "name", "type": "string" },
+            { "name": "params", "type": "object" },
+            {
+              "name": "confirm",
+              "type": "object",
+              "properties": [
+                { "name": "title", "type": "string" },
+                { "name": "message", "type": "string" },
+                { "name": "confirmLabel", "type": "string" },
+                { "name": "cancelLabel", "type": "string" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
