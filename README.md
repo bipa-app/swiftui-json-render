@@ -49,7 +49,7 @@ struct ContentView: View {
 }
 ```
 
-## Components (Phase 1 + 2)
+## Components (Phase 1 + 2 + 3 + 4)
 
 ### Layout
 
@@ -172,6 +172,49 @@ struct ContentView: View {
 }
 ```
 
+#### AmountInput
+```json
+{
+  "type": "AmountInput",
+  "props": {
+    "label": "Amount",
+    "placeholder": "0,00",
+    "currency": "BRL",
+    "action": { "name": "submit_amount" }
+  }
+}
+```
+
+#### ConfirmDialog
+```json
+{
+  "type": "ConfirmDialog",
+  "props": {
+    "title": "Confirm Transfer",
+    "message": "Send R$ 10.00?",
+    "confirmLabel": "Confirm",
+    "cancelLabel": "Cancel",
+    "triggerLabel": "Send",
+    "action": { "name": "send_pix" }
+  }
+}
+```
+
+#### ChoiceList
+```json
+{
+  "type": "ChoiceList",
+  "props": {
+    "question": "Which PIX key?",
+    "options": [
+      { "id": "cpf", "label": "CPF: ***456", "description": "Tax ID" },
+      { "id": "phone", "label": "Phone: +55 11 ****-5678" }
+    ],
+    "action": { "name": "select_pix_key", "paramKey": "key_id" }
+  }
+}
+```
+
 ### Feedback
 
 #### Alert
@@ -187,6 +230,93 @@ struct ContentView: View {
       "label": "Pay Now",
       "name": "pay_bill"
     }
+  }
+}
+```
+
+### Financial (Phase 3)
+
+#### BalanceCard
+```json
+{
+  "type": "BalanceCard",
+  "props": {
+    "brl": 1245032,
+    "btc": 234000,
+    "usdt": 50000000,
+    "showChange": true,
+    "brlChange": 5.2
+  }
+}
+```
+
+#### TransactionRow
+```json
+{
+  "type": "TransactionRow",
+  "props": {
+    "id": "tx_123",
+    "description": "PIX to Maria",
+    "amount": -50000,
+    "date": "2026-01-14",
+    "category": "transfer",
+    "icon": "arrow.up.right"
+  }
+}
+```
+
+#### TransactionList
+```json
+{
+  "type": "TransactionList",
+  "props": {
+    "transactions": [
+      { "id": "tx1", "description": "PIX to Maria", "amount": -50000, "date": "2026-01-14" },
+      { "id": "tx2", "description": "Salary", "amount": 500000, "date": "2026-01-10" }
+    ]
+  }
+}
+```
+
+#### AssetPrice
+```json
+{
+  "type": "AssetPrice",
+  "props": {
+    "symbol": "BTC",
+    "price": 180000.23,
+    "change": 1200.5,
+    "changePercent": 1.28
+  }
+}
+```
+
+#### PieChart
+```json
+{
+  "type": "PieChart",
+  "props": {
+    "title": "Spending by Category",
+    "segments": [
+      { "label": "Food", "value": 45000, "color": "#FF6B6B" },
+      { "label": "Transport", "value": 22000, "color": "#4ECDC4" }
+    ],
+    "showLegend": true
+  }
+}
+```
+
+#### LineChart
+```json
+{
+  "type": "LineChart",
+  "props": {
+    "title": "Portfolio Value",
+    "points": [
+      { "x": "2026-01-10", "y": 120000 },
+      { "x": "2026-01-11", "y": 124000 }
+    ],
+    "color": "#45B7D1"
   }
 }
 ```

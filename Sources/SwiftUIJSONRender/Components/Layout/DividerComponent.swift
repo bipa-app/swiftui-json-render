@@ -30,7 +30,8 @@ public struct DividerBuilder: ComponentBuilder {
     let thickness = CGFloat(node.double("thickness") ?? 1)
     let padding = CGFloat(node.double("padding") ?? 0)
     let length = node.double("length")
-    let color = ColorParser.parse(node.string("color"), default: context.textSecondary, context: context)
+    let color = ColorParser.parse(
+      node.string("color"), default: context.textSecondary, context: context)
 
     let base = Rectangle().fill(color)
 

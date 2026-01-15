@@ -10,7 +10,8 @@ func makeTestContext(
   registry: ComponentRegistry? = nil
 ) -> RenderContext {
   let reg =
-    registry ?? {
+    registry
+    ?? {
       let r = ComponentRegistry()
       r.register(module: BuiltInComponentsModule())
       return r

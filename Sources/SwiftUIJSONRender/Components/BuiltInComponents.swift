@@ -20,8 +20,19 @@ public struct BuiltInComponentsModule: ComponentModule {
       AnyComponentBuilder(ImageBuilder.self),
       AnyComponentBuilder(IconBuilder.self),
 
+      // Financial
+      AnyComponentBuilder(BalanceCardBuilder.self),
+      AnyComponentBuilder(TransactionRowBuilder.self),
+      AnyComponentBuilder(TransactionListBuilder.self),
+      AnyComponentBuilder(AssetPriceBuilder.self),
+      AnyComponentBuilder(PieChartBuilder.self),
+      AnyComponentBuilder(LineChartBuilder.self),
+
       // Interactive
       AnyComponentBuilder(ButtonBuilder.self),
+      AnyComponentBuilder(AmountInputBuilder.self),
+      AnyComponentBuilder(ConfirmDialogBuilder.self),
+      AnyComponentBuilder(ChoiceListBuilder.self),
 
       // Feedback
       AnyComponentBuilder(AlertBuilder.self),
