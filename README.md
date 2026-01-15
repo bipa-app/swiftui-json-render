@@ -3,7 +3,7 @@
 [![Swift 5.9+](https://img.shields.io/badge/Swift-5.9+-orange.svg)](https://swift.org)
 [![iOS 16+](https://img.shields.io/badge/iOS-16+-blue.svg)](https://developer.apple.com/ios/)
 [![macOS 13+](https://img.shields.io/badge/macOS-13+-blue.svg)](https://developer.apple.com/macos/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
 
 > **Pre-release** - This library is currently in early development (v0.x). The API may change between releases and it may contain bugs. Use in production at your own risk. Feedback and bug reports are welcome!
 
@@ -576,7 +576,7 @@ A complete example app is available in the `Example/` directory demonstrating:
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+Apache License 2.0. See [LICENSE](LICENSE) for details.
 
 ## Contributing
 
