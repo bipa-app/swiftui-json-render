@@ -126,11 +126,13 @@ struct VersionError {
   var message: String {
     switch result {
     case .tooOld:
-      return "Schema version \(jsonVersion) is no longer supported. Minimum: \(SchemaVersion.minimumSupported)"
+      return
+        "Schema version \(jsonVersion) is no longer supported. Minimum: \(SchemaVersion.minimumSupported)"
     case .tooNew:
-      return "Schema version \(jsonVersion) requires a newer library. Current: \(SchemaVersion.current)"
+      return
+        "Schema version \(jsonVersion) requires a newer library. Current: \(SchemaVersion.current)"
     case .compatible, .newerMinor, .olderSupported:
-      return "" // Should not happen
+      return ""  // Should not happen
     }
   }
 }
@@ -145,10 +147,10 @@ private struct ErrorView: View {
     Image(systemName: "exclamationmark.triangle.fill")
       .font(.largeTitle)
       .foregroundColor(.orange)
-    .padding()
-    .frame(maxWidth: .infinity)
-    .background(Color.orange.opacity(0.1))
-    .cornerRadius(8)
+      .padding()
+      .frame(maxWidth: .infinity)
+      .background(Color.orange.opacity(0.1))
+      .cornerRadius(8)
   }
 }
 

@@ -159,7 +159,7 @@ extension ComponentSchema {
       type: "Spacer",
       children: false,
       props: [
-        ComponentPropSchema(name: "size", type: "number"),
+        ComponentPropSchema(name: "size", type: "number")
       ]
     ),
     ComponentSchema(
