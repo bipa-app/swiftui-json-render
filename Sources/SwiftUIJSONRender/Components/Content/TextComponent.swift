@@ -37,7 +37,7 @@ public struct TextBuilder: ComponentBuilder {
       Text(content)
         .font(font)
         .fontWeight(fontWeight)
-        .foregroundColor(color)
+        .foregroundStyle(color)
     )
   }
 

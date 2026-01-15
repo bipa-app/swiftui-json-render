@@ -32,6 +32,7 @@ public struct ImageBuilder: ComponentBuilder {
     let height = node.double("height").map { CGFloat($0) }
 
     if let urlString = urlString, let url = URL(string: urlString) {
+      let placeholderOpacity = context.placeholderOpacity
       return AnyView(
         AsyncImage(url: url) { phase in
           switch phase {
@@ -41,13 +42,13 @@ public struct ImageBuilder: ComponentBuilder {
               .aspectRatio(contentMode: contentMode)
               .frame(width: width, height: height)
           case .failure:
-            Color.gray.opacity(0.2)
+            Color.gray.opacity(placeholderOpacity)
               .frame(width: width, height: height)
           case .empty:
             ProgressView()
               .frame(width: width, height: height)
           @unknown default:
-            Color.gray.opacity(0.2)
+            Color.gray.opacity(placeholderOpacity)
               .frame(width: width, height: height)
           }
         }

@@ -35,6 +35,7 @@ import SwiftUI
 /// ```
 public struct JSONView: View {
   @Environment(\.componentTheme) private var themeType
+  @Environment(\.renderStrings) private var stringsType
   @Environment(\.actionHandler) private var actionHandler
   @Environment(\.componentRegistry) private var registry
   @Environment(\.unknownComponentBehavior) private var unknownComponentBehavior
@@ -81,9 +82,20 @@ public struct JSONView: View {
 
   public var body: some View {
     if let error = parseError {
-      ErrorView(message: error)
+      ErrorView(
+        message: error,
+        warningColor: themeType.warningColor,
+        alertBackgroundOpacity: themeType.alertBackgroundOpacity,
+        radiusMD: themeType.radiusMD
+      )
     } else if let versionError = versionError {
-      VersionErrorView(error: versionError)
+      VersionErrorView(
+        error: versionError,
+        primaryColor: themeType.primaryColor,
+        textSecondary: themeType.textSecondary,
+        alertBackgroundOpacity: themeType.alertBackgroundOpacity,
+        radiusMD: themeType.radiusMD
+      )
     } else if let node = node {
       renderNode(node)
     }
@@ -93,6 +105,7 @@ public struct JSONView: View {
   private func renderNode(_ node: ComponentNode) -> AnyView {
     let context = RenderContext(
       themeType: themeType,
+      stringsType: stringsType,
       actionHandler: actionHandler,
       registry: registry,
       unknownComponentBehavior: unknownComponentBehavior
@@ -142,38 +155,45 @@ struct VersionError {
 /// A view displayed when JSON parsing fails.
 private struct ErrorView: View {
   let message: String
+  let warningColor: Color
+  let alertBackgroundOpacity: Double
+  let radiusMD: CGFloat
 
   var body: some View {
     Image(systemName: "exclamationmark.triangle.fill")
       .font(.largeTitle)
-      .foregroundColor(.orange)
+      .foregroundStyle(warningColor)
       .padding()
       .frame(maxWidth: .infinity)
-      .background(Color.orange.opacity(0.1))
-      .cornerRadius(8)
+      .background(warningColor.opacity(alertBackgroundOpacity))
+      .clipShape(.rect(cornerRadius: radiusMD))
   }
 }
 
 /// A view displayed when schema version is incompatible.
 private struct VersionErrorView: View {
   let error: VersionError
+  let primaryColor: Color
+  let textSecondary: Color
+  let alertBackgroundOpacity: Double
+  let radiusMD: CGFloat
 
   var body: some View {
     VStack(spacing: 8) {
       Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
         .font(.largeTitle)
-        .foregroundColor(.purple)
+        .foregroundStyle(primaryColor)
       Text("Version Incompatible")
         .font(.headline)
       Text(error.message)
         .font(.caption)
-        .foregroundColor(.secondary)
+        .foregroundStyle(textSecondary)
         .multilineTextAlignment(.center)
     }
     .padding()
     .frame(maxWidth: .infinity)
-    .background(Color.purple.opacity(0.1))
-    .cornerRadius(8)
+    .background(primaryColor.opacity(alertBackgroundOpacity))
+    .clipShape(.rect(cornerRadius: radiusMD))
   }
 }
 

@@ -34,10 +34,10 @@ public struct AssetPriceBuilder: ComponentBuilder {
         VStack(alignment: .leading, spacing: context.spacingXS) {
           Text(symbol)
             .font(context.headingFont)
-            .foregroundColor(context.textPrimary)
+            .foregroundStyle(context.textPrimary)
           Text(FinancialFormatter.formatBRLAmount(price))
             .font(context.bodyFont)
-            .foregroundColor(context.textSecondary)
+            .foregroundStyle(context.textSecondary)
         }
 
         Spacer()
@@ -52,12 +52,12 @@ public struct AssetPriceBuilder: ComponentBuilder {
             Text(FinancialFormatter.formatPercent(changePercent))
               .font(context.captionFont)
           }
-          .foregroundColor(positive ? context.successColor : context.errorColor)
+          .foregroundStyle(positive ? context.successColor : context.errorColor)
         }
       }
       .padding(context.spacingMD)
       .background(context.surfaceColor)
-      .cornerRadius(context.radiusMD)
+      .clipShape(.rect(cornerRadius: context.radiusMD))
     )
   }
 

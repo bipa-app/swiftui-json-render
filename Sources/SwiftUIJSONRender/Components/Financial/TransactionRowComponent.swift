@@ -28,7 +28,7 @@ public struct TransactionRowBuilder: ComponentBuilder {
   public static var typeName: String { "TransactionRow" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let description = node.string("description") ?? "Transaction"
+    let description = node.string("description") ?? context.defaultTransactionDescription
     let amount = node.int("amount") ?? 0
     let date = node.string("date") ?? ""
     let category = node.string("category")
@@ -38,17 +38,17 @@ public struct TransactionRowBuilder: ComponentBuilder {
       HStack(spacing: context.spacingSM) {
         if let icon = icon {
           Image(systemName: icon)
-            .foregroundColor(context.primaryColor)
+            .foregroundStyle(context.primaryColor)
         }
 
         VStack(alignment: .leading, spacing: context.spacingXS) {
           Text(description)
             .font(context.bodyFont)
-            .foregroundColor(context.textPrimary)
+            .foregroundStyle(context.textPrimary)
           if let category = category, !category.isEmpty {
             Text(category)
               .font(context.captionFont)
-              .foregroundColor(context.textSecondary)
+              .foregroundStyle(context.textSecondary)
           }
         }
 
@@ -57,11 +57,11 @@ public struct TransactionRowBuilder: ComponentBuilder {
         VStack(alignment: .trailing, spacing: context.spacingXS) {
           Text(FinancialFormatter.formatBRL(cents: amount))
             .font(context.bodyFont)
-            .foregroundColor(amount < 0 ? context.errorColor : context.successColor)
+            .foregroundStyle(amount < 0 ? context.errorColor : context.successColor)
           if !date.isEmpty {
             Text(date)
               .font(context.captionFont)
-              .foregroundColor(context.textSecondary)
+              .foregroundStyle(context.textSecondary)
           }
         }
       }

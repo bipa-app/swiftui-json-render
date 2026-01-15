@@ -28,7 +28,7 @@ public struct HeadingBuilder: ComponentBuilder {
     return AnyView(
       Text(text)
         .font(font)
-        .foregroundColor(context.textPrimary)
+        .foregroundStyle(context.textPrimary)
     )
   }
 

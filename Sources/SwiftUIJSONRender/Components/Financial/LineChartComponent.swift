@@ -39,7 +39,7 @@ public struct LineChartBuilder: ComponentBuilder {
         if let title = title {
           Text(title)
             .font(context.headingFont)
-            .foregroundColor(context.textPrimary)
+            .foregroundStyle(context.textPrimary)
         }
 
         #if canImport(Charts)
@@ -52,7 +52,7 @@ public struct LineChartBuilder: ComponentBuilder {
                 )
                 .foregroundStyle(color)
               }
-              .frame(height: 180)
+              .frame(height: context.chartHeight)
             } else {
               EmptyLineStateView(context: context)
             }
@@ -65,7 +65,7 @@ public struct LineChartBuilder: ComponentBuilder {
       }
       .padding(context.spacingMD)
       .background(context.surfaceColor)
-      .cornerRadius(context.radiusMD)
+      .clipShape(.rect(cornerRadius: context.radiusMD))
     )
   }
 
@@ -93,9 +93,9 @@ private struct EmptyLineStateView: View {
   let context: RenderContext
 
   var body: some View {
-    Text("No data available")
+    Text(context.noDataAvailable)
       .font(context.captionFont)
-      .foregroundColor(context.textSecondary)
-      .frame(maxWidth: .infinity, minHeight: 120)
+      .foregroundStyle(context.textSecondary)
+      .frame(maxWidth: .infinity, minHeight: context.emptyStateHeight)
   }
 }

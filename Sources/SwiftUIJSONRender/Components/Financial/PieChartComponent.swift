@@ -37,7 +37,7 @@ public struct PieChartBuilder: ComponentBuilder {
         if let title = title {
           Text(title)
             .font(context.headingFont)
-            .foregroundColor(context.textPrimary)
+            .foregroundStyle(context.textPrimary)
         }
 
         #if canImport(Charts)
@@ -49,7 +49,7 @@ public struct PieChartBuilder: ComponentBuilder {
                 )
                 .foregroundStyle(segment.color)
               }
-              .frame(height: 180)
+              .frame(height: context.chartHeight)
             } else {
               EmptyStateView(context: context)
             }
@@ -66,10 +66,10 @@ public struct PieChartBuilder: ComponentBuilder {
               HStack(spacing: context.spacingXS) {
                 Circle()
                   .fill(segment.color)
-                  .frame(width: 10, height: 10)
+                  .frame(width: context.legendIndicatorSize, height: context.legendIndicatorSize)
                 Text(segment.label)
                   .font(context.captionFont)
-                  .foregroundColor(context.textSecondary)
+                  .foregroundStyle(context.textSecondary)
               }
             }
           }
@@ -77,7 +77,7 @@ public struct PieChartBuilder: ComponentBuilder {
       }
       .padding(context.spacingMD)
       .background(context.surfaceColor)
-      .cornerRadius(context.radiusMD)
+      .clipShape(.rect(cornerRadius: context.radiusMD))
     )
   }
 
@@ -108,9 +108,9 @@ private struct EmptyStateView: View {
   let context: RenderContext
 
   var body: some View {
-    Text("No data available")
+    Text(context.noDataAvailable)
       .font(context.captionFont)
-      .foregroundColor(context.textSecondary)
-      .frame(maxWidth: .infinity, minHeight: 120)
+      .foregroundStyle(context.textSecondary)
+      .frame(maxWidth: .infinity, minHeight: context.emptyStateHeight)
   }
 }

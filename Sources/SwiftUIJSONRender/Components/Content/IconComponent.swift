@@ -22,15 +22,15 @@ public struct IconBuilder: ComponentBuilder {
   public static var typeName: String { "Icon" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let name = node.string("name") ?? "questionmark"
-    let size = CGFloat(node.double("size") ?? 16)
+    let name = node.string("name") ?? context.defaultIconName
+    let size = CGFloat(node.double("size") ?? Double(context.defaultIconSize))
     let color = ColorParser.parse(
       node.string("color"), default: context.textPrimary, context: context)
 
     return AnyView(
       Image(systemName: name)
         .font(.system(size: size))
-        .foregroundColor(color)
+        .foregroundStyle(color)
     )
   }
 }

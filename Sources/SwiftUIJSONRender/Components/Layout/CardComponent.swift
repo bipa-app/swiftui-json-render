@@ -34,7 +34,7 @@ public struct CardBuilder: ComponentBuilder {
         if let title = title {
           Text(title)
             .font(context.headingFont)
-            .foregroundColor(context.textPrimary)
+            .foregroundStyle(context.textPrimary)
         }
 
         ForEach(Array(children.enumerated()), id: \.offset) { _, child in
@@ -44,7 +44,7 @@ public struct CardBuilder: ComponentBuilder {
       .padding(padding)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(context.surfaceColor)
-      .cornerRadius(cornerRadius)
+      .clipShape(.rect(cornerRadius: cornerRadius))
     )
   }
 }
