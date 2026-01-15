@@ -24,7 +24,7 @@ public struct ChoiceListBuilder: ComponentBuilder {
   public static var typeName: String { "ChoiceList" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let question = node.string("question") ?? "Choose an option"
+    let question = node.string("question") ?? context.chooseOptionPrompt
     let options = parseOptions(node.array("options"))
     let actionConfig = parseActionConfig(node.dictionary("action"))
 
@@ -102,7 +102,7 @@ private struct ChoiceListView: View {
           .frame(maxWidth: .infinity, alignment: .leading)
           .padding(context.spacingSM)
           .background(context.surfaceColor)
-          .cornerRadius(context.radiusSM)
+          .clipShape(.rect(cornerRadius: context.radiusSM))
         }
       }
     }

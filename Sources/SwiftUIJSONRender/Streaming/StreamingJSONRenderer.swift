@@ -16,10 +16,11 @@ public final class StreamingJSONRenderer: ObservableObject {
 
   /// Append a new JSON chunk from the stream.
   /// - Parameter chunk: Partial JSON string to append.
-  public func append(_ chunk: String) {
+  /// - Parameter animationDuration: Duration for the update animation. Pass theme's `animationDuration`.
+  public func append(_ chunk: String, animationDuration: Double = DefaultTheme.animationDuration) {
     parser.append(chunk)
     if let parsed = parser.latestComponentNode() {
-      withAnimation(.easeInOut(duration: 0.2)) {
+      withAnimation(.easeInOut(duration: animationDuration)) {
         node = parsed
       }
     }
@@ -49,6 +50,7 @@ private struct StreamingRendererView: View {
   @Environment(\.componentTheme) private var themeType
 
   var body: some View {
+    let animationDuration = themeType.animationDuration
     Group {
       if let node = renderer.node {
         JSONView(node)
@@ -63,8 +65,8 @@ private struct StreamingRendererView: View {
           .transition(.opacity)
       }
     }
-    .animation(.easeInOut(duration: 0.2), value: renderer.node?.type ?? "")
-    .animation(.easeInOut(duration: 0.2), value: renderer.isLoading)
+    .animation(.easeInOut(duration: animationDuration), value: renderer.node?.type ?? "")
+    .animation(.easeInOut(duration: animationDuration), value: renderer.isLoading)
   }
 }
 
@@ -75,7 +77,7 @@ private struct StreamingLoadingView: View {
     ProgressView()
       .tint(themeType.primaryColor)
       .frame(maxWidth: .infinity)
-      .padding(16)
+      .padding(themeType.spacingMD)
       .background(
         RoundedRectangle(cornerRadius: themeType.radiusMD)
           .fill(themeType.surfaceColor)
@@ -88,13 +90,13 @@ private struct StreamingLoadingBadge: View {
 
   var body: some View {
     ProgressView()
-      .scaleEffect(0.7)
+      .scaleEffect(themeType.loadingBadgeScale)
       .tint(themeType.primaryColor)
-      .padding(8)
+      .padding(themeType.spacingSM)
       .background(
-        RoundedRectangle(cornerRadius: 8)
+        RoundedRectangle(cornerRadius: themeType.radiusSM)
           .fill(themeType.surfaceColor)
       )
-      .padding(8)
+      .padding(themeType.spacingSM)
   }
 }

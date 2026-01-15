@@ -29,7 +29,7 @@ public struct ButtonBuilder: ComponentBuilder {
   public static var typeName: String { "Button" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let label = node.string("label") ?? "Button"
+    let label = node.string("label") ?? context.defaultButtonLabel
     let style = node.string("style", default: "primary")
     let icon = node.string("icon")
     let disabled = node.bool("disabled") ?? false
@@ -71,10 +71,10 @@ private struct ButtonView: View {
       .frame(maxWidth: style == "primary" ? .infinity : nil)
       .background(backgroundColor)
       .foregroundColor(foregroundColor)
-      .cornerRadius(context.radiusSM)
+      .clipShape(.rect(cornerRadius: context.radiusSM))
     }
     .disabled(disabled)
-    .opacity(disabled ? 0.5 : 1.0)
+    .opacity(disabled ? context.disabledOpacity : 1.0)
   }
 
   private var backgroundColor: Color {
@@ -92,12 +92,14 @@ private struct ButtonView: View {
 
   private var foregroundColor: Color {
     switch style.lowercased() {
-    case "primary", "destructive":
-      return .white
+    case "primary":
+      return context.buttonPrimaryForeground
+    case "destructive":
+      return context.buttonDestructiveForeground
     case "secondary":
       return context.textPrimary
     default:
-      return .white
+      return context.buttonPrimaryForeground
     }
   }
 

@@ -28,7 +28,7 @@ public struct TransactionRowBuilder: ComponentBuilder {
   public static var typeName: String { "TransactionRow" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let description = node.string("description") ?? "Transaction"
+    let description = node.string("description") ?? context.defaultTransactionDescription
     let amount = node.int("amount") ?? 0
     let date = node.string("date") ?? ""
     let category = node.string("category")

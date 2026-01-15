@@ -44,7 +44,7 @@ public struct CardBuilder: ComponentBuilder {
       .padding(padding)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(context.surfaceColor)
-      .cornerRadius(cornerRadius)
+      .clipShape(.rect(cornerRadius: cornerRadius))
     )
   }
 }

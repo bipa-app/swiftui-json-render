@@ -82,6 +82,53 @@ public protocol JSONRenderTheme: Sendable {
 
   /// Large corner radius (16pt).
   static var radiusLG: CGFloat { get }
+
+  // MARK: - Opacity
+
+  /// Opacity for disabled interactive elements.
+  static var disabledOpacity: Double { get }
+
+  /// Opacity for placeholder backgrounds.
+  static var placeholderOpacity: Double { get }
+
+  /// Opacity for alert/feedback backgrounds.
+  static var alertBackgroundOpacity: Double { get }
+
+  /// Opacity for alert/feedback borders.
+  static var alertBorderOpacity: Double { get }
+
+  // MARK: - Sizes
+
+  /// Default icon size when not specified.
+  static var defaultIconSize: CGFloat { get }
+
+  /// Default height for charts.
+  static var chartHeight: CGFloat { get }
+
+  /// Height for empty state views.
+  static var emptyStateHeight: CGFloat { get }
+
+  /// Size for legend indicator circles.
+  static var legendIndicatorSize: CGFloat { get }
+
+  /// Default border width.
+  static var borderWidth: CGFloat { get }
+
+  // MARK: - Animation
+
+  /// Duration for standard animations.
+  static var animationDuration: Double { get }
+
+  /// Scale factor for loading indicators.
+  static var loadingBadgeScale: CGFloat { get }
+
+  // MARK: - Button Colors
+
+  /// Foreground color for primary buttons.
+  static var buttonPrimaryForeground: Color { get }
+
+  /// Foreground color for destructive buttons.
+  static var buttonDestructiveForeground: Color { get }
 }
 
 // MARK: - Default Values
@@ -115,4 +162,25 @@ extension JSONRenderTheme {
   public static var radiusSM: CGFloat { 4 }
   public static var radiusMD: CGFloat { 8 }
   public static var radiusLG: CGFloat { 16 }
+
+  // Opacity defaults
+  public static var disabledOpacity: Double { 0.5 }
+  public static var placeholderOpacity: Double { 0.2 }
+  public static var alertBackgroundOpacity: Double { 0.1 }
+  public static var alertBorderOpacity: Double { 0.3 }
+
+  // Size defaults
+  public static var defaultIconSize: CGFloat { 16 }
+  public static var chartHeight: CGFloat { 180 }
+  public static var emptyStateHeight: CGFloat { 120 }
+  public static var legendIndicatorSize: CGFloat { 10 }
+  public static var borderWidth: CGFloat { 1 }
+
+  // Animation defaults
+  public static var animationDuration: Double { 0.2 }
+  public static var loadingBadgeScale: CGFloat { 0.7 }
+
+  // Button color defaults
+  public static var buttonPrimaryForeground: Color { .white }
+  public static var buttonDestructiveForeground: Color { .white }
 }

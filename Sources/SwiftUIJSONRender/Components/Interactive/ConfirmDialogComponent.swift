@@ -28,11 +28,11 @@ public struct ConfirmDialogBuilder: ComponentBuilder {
   public static var typeName: String { "ConfirmDialog" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let title = node.string("title") ?? "Confirm"
+    let title = node.string("title") ?? context.confirmDialogTitle
     let message = node.string("message")
-    let confirmLabel = node.string("confirmLabel") ?? "Confirm"
-    let cancelLabel = node.string("cancelLabel") ?? "Cancel"
-    let triggerLabel = node.string("triggerLabel") ?? "Confirm"
+    let confirmLabel = node.string("confirmLabel") ?? context.confirmButtonLabel
+    let cancelLabel = node.string("cancelLabel") ?? context.cancelButtonLabel
+    let triggerLabel = node.string("triggerLabel") ?? context.confirmButtonLabel
     let actionValue = node.props?["action"]
 
     return AnyView(

@@ -76,7 +76,7 @@ private struct AmountInputView: View {
       }
       .padding(context.spacingSM)
       .background(context.surfaceColor)
-      .cornerRadius(context.radiusSM)
+      .clipShape(.rect(cornerRadius: context.radiusSM))
     }
   }
 }

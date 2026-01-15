@@ -29,7 +29,7 @@ public struct AlertBuilder: ComponentBuilder {
   public static var typeName: String { "Alert" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let title = node.string("title") ?? "Alert"
+    let title = node.string("title") ?? context.defaultAlertTitle
     let message = node.string("message")
     let severity = node.string("severity", default: "info")
     let dismissible = node.bool("dismissible") ?? false
@@ -109,11 +109,11 @@ private struct AlertView: View {
         }
       }
       .padding(context.spacingMD)
-      .background(severityColor.opacity(0.1))
-      .cornerRadius(context.radiusMD)
+      .background(severityColor.opacity(context.alertBackgroundOpacity))
+      .clipShape(.rect(cornerRadius: context.radiusMD))
       .overlay(
         RoundedRectangle(cornerRadius: context.radiusMD)
-          .stroke(severityColor.opacity(0.3), lineWidth: 1)
+          .stroke(severityColor.opacity(context.alertBorderOpacity), lineWidth: context.borderWidth)
       )
     }
   }

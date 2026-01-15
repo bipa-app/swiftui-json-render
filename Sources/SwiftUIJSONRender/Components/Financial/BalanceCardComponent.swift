@@ -34,7 +34,7 @@ public struct BalanceCardBuilder: ComponentBuilder {
 
     return AnyView(
       VStack(alignment: .leading, spacing: context.spacingSM) {
-        Text("Balances")
+        Text(context.balancesTitle)
           .font(context.headingFont)
           .foregroundColor(context.textPrimary)
 
@@ -57,7 +57,7 @@ public struct BalanceCardBuilder: ComponentBuilder {
       }
       .padding(context.spacingMD)
       .background(context.surfaceColor)
-      .cornerRadius(context.radiusMD)
+      .clipShape(.rect(cornerRadius: context.radiusMD))
     )
   }
 

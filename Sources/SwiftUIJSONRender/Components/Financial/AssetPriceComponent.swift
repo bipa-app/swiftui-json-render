@@ -57,7 +57,7 @@ public struct AssetPriceBuilder: ComponentBuilder {
       }
       .padding(context.spacingMD)
       .background(context.surfaceColor)
-      .cornerRadius(context.radiusMD)
+      .clipShape(.rect(cornerRadius: context.radiusMD))
     )
   }
 

@@ -8,6 +8,9 @@ public struct RenderContext {
   /// The theme type to use for styling.
   public let themeType: any JSONRenderTheme.Type
 
+  /// The strings type to use for localization.
+  public let stringsType: any JSONRenderStrings.Type
+
   /// The action handler closure, if provided.
   public let actionHandler: ActionHandler?
 
@@ -20,16 +23,19 @@ public struct RenderContext {
   /// Creates a new render context.
   /// - Parameters:
   ///   - themeType: The theme type to use. Defaults to `DefaultTheme.self`.
+  ///   - stringsType: The strings type to use for localization. Defaults to `DefaultStrings.self`.
   ///   - actionHandler: Optional action handler closure.
   ///   - registry: The component registry. Defaults to the shared registry.
   ///   - unknownComponentBehavior: How to handle unknown components. Defaults to `.placeholder`.
   public init(
     themeType: any JSONRenderTheme.Type = DefaultTheme.self,
+    stringsType: any JSONRenderStrings.Type = DefaultStrings.self,
     actionHandler: ActionHandler? = nil,
     registry: ComponentRegistry = .shared,
     unknownComponentBehavior: UnknownComponentBehavior = .placeholder
   ) {
     self.themeType = themeType
+    self.stringsType = stringsType
     self.actionHandler = actionHandler
     self.registry = registry
     self.unknownComponentBehavior = unknownComponentBehavior
@@ -87,6 +93,20 @@ public struct RenderContext {
   public func with(themeType: any JSONRenderTheme.Type) -> RenderContext {
     RenderContext(
       themeType: themeType,
+      stringsType: stringsType,
+      actionHandler: actionHandler,
+      registry: registry,
+      unknownComponentBehavior: unknownComponentBehavior
+    )
+  }
+
+  /// Creates a new context with an updated strings type.
+  /// - Parameter stringsType: The new strings type.
+  /// - Returns: A new context with the updated strings.
+  public func with(stringsType: any JSONRenderStrings.Type) -> RenderContext {
+    RenderContext(
+      themeType: themeType,
+      stringsType: stringsType,
       actionHandler: actionHandler,
       registry: registry,
       unknownComponentBehavior: unknownComponentBehavior
@@ -99,6 +119,7 @@ public struct RenderContext {
   public func with(actionHandler: ActionHandler?) -> RenderContext {
     RenderContext(
       themeType: themeType,
+      stringsType: stringsType,
       actionHandler: actionHandler,
       registry: registry,
       unknownComponentBehavior: unknownComponentBehavior
@@ -111,6 +132,7 @@ public struct RenderContext {
   public func with(registry: ComponentRegistry) -> RenderContext {
     RenderContext(
       themeType: themeType,
+      stringsType: stringsType,
       actionHandler: actionHandler,
       registry: registry,
       unknownComponentBehavior: unknownComponentBehavior
@@ -123,6 +145,7 @@ public struct RenderContext {
   public func with(unknownComponentBehavior behavior: UnknownComponentBehavior) -> RenderContext {
     RenderContext(
       themeType: themeType,
+      stringsType: stringsType,
       actionHandler: actionHandler,
       registry: registry,
       unknownComponentBehavior: behavior
@@ -192,6 +215,87 @@ extension RenderContext {
 
   /// Large corner radius from the theme.
   public var radiusLG: CGFloat { themeType.radiusLG }
+
+  // MARK: - Opacity
+
+  /// The opacity for disabled elements.
+  public var disabledOpacity: Double { themeType.disabledOpacity }
+
+  /// The opacity for placeholder backgrounds.
+  public var placeholderOpacity: Double { themeType.placeholderOpacity }
+
+  /// The opacity for alert/feedback backgrounds.
+  public var alertBackgroundOpacity: Double { themeType.alertBackgroundOpacity }
+
+  /// The opacity for alert/feedback borders.
+  public var alertBorderOpacity: Double { themeType.alertBorderOpacity }
+
+  // MARK: - Sizes
+
+  /// The default icon size.
+  public var defaultIconSize: CGFloat { themeType.defaultIconSize }
+
+  /// The default chart height.
+  public var chartHeight: CGFloat { themeType.chartHeight }
+
+  /// The height for empty state views.
+  public var emptyStateHeight: CGFloat { themeType.emptyStateHeight }
+
+  /// The size for legend indicator circles.
+  public var legendIndicatorSize: CGFloat { themeType.legendIndicatorSize }
+
+  /// The default border width.
+  public var borderWidth: CGFloat { themeType.borderWidth }
+
+  // MARK: - Animation
+
+  /// The duration for standard animations.
+  public var animationDuration: Double { themeType.animationDuration }
+
+  /// The scale factor for loading badges.
+  public var loadingBadgeScale: CGFloat { themeType.loadingBadgeScale }
+
+  // MARK: - Button Colors
+
+  /// The foreground color for primary buttons.
+  public var buttonPrimaryForeground: Color { themeType.buttonPrimaryForeground }
+
+  /// The foreground color for destructive buttons.
+  public var buttonDestructiveForeground: Color { themeType.buttonDestructiveForeground }
+}
+
+// MARK: - Strings Accessors
+
+extension RenderContext {
+  /// The default button label.
+  public var defaultButtonLabel: String { stringsType.defaultButtonLabel }
+
+  /// The default alert title.
+  public var defaultAlertTitle: String { stringsType.defaultAlertTitle }
+
+  /// The confirm dialog title.
+  public var confirmDialogTitle: String { stringsType.confirmDialogTitle }
+
+  /// The confirm button label.
+  public var confirmButtonLabel: String { stringsType.confirmButtonLabel }
+
+  /// The cancel button label.
+  public var cancelButtonLabel: String { stringsType.cancelButtonLabel }
+
+  /// The choose option prompt.
+  public var chooseOptionPrompt: String { stringsType.chooseOptionPrompt }
+
+  /// The no data available message.
+  public var noDataAvailable: String { stringsType.noDataAvailable }
+
+  /// The balances title.
+  public var balancesTitle: String { stringsType.balancesTitle }
+
+  /// The default icon name.
+  public var defaultIconName: String { stringsType.defaultIconName }
+
+  /// The default transaction description.
+  public var defaultTransactionDescription: String { stringsType.defaultTransactionDescription }
 }
 
 // MARK: - Unknown Component Views
@@ -233,6 +337,6 @@ struct UnknownComponentErrorView: View {
     .padding(.horizontal, 8)
     .padding(.vertical, 4)
     .background(Color.red.opacity(0.1))
-    .cornerRadius(4)
+    .clipShape(.rect(cornerRadius: 4))
   }
 }
