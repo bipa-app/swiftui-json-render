@@ -84,10 +84,15 @@ struct ComponentRegistryTests {
 
     #expect(types.contains("Stack"))
     #expect(types.contains("Card"))
+    #expect(types.contains("Divider"))
+    #expect(types.contains("Spacer"))
     #expect(types.contains("Text"))
+    #expect(types.contains("Heading"))
+    #expect(types.contains("Image"))
+    #expect(types.contains("Icon"))
     #expect(types.contains("Button"))
     #expect(types.contains("Alert"))
-    #expect(types.count == 5)
+    #expect(types.count == 10)
   }
 
   @Test("registeredTypes is sorted")
@@ -129,7 +134,7 @@ struct ComponentRegistryTests {
     let registry = ComponentRegistry()
     registry.register(module: BuiltInComponentsModule())
 
-    #expect(registry.registeredTypes.count == 5)
+    #expect(registry.registeredTypes.count == 10)
 
     registry.unregisterAll()
 

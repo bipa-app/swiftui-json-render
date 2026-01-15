@@ -31,7 +31,7 @@ public struct TextBuilder: ComponentBuilder {
 
     let font = parseFont(style: style, context: context)
     let fontWeight = parseFontWeight(weight)
-    let color = parseColor(colorString, context: context)
+    let color = ColorParser.parse(colorString, default: context.textPrimary, context: context)
 
     return AnyView(
       Text(content)
@@ -79,65 +79,4 @@ public struct TextBuilder: ComponentBuilder {
     }
   }
 
-  private static func parseColor(_ colorString: String?, context: RenderContext) -> Color {
-    guard let colorString = colorString else {
-      return context.textPrimary
-    }
-
-    // Handle hex colors
-    if colorString.hasPrefix("#") {
-      return Color(hex: colorString) ?? context.textPrimary
-    }
-
-    // Handle named colors
-    switch colorString.lowercased() {
-    case "primary":
-      return context.textPrimary
-    case "secondary":
-      return context.textSecondary
-    case "error", "red":
-      return context.errorColor
-    case "success", "green":
-      return context.successColor
-    case "warning", "orange":
-      return context.warningColor
-    default:
-      return context.textPrimary
-    }
-  }
-}
-
-// MARK: - Color Hex Extension
-
-extension Color {
-  fileprivate init?(hex: String) {
-    var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
-    hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
-
-    var rgb: UInt64 = 0
-
-    guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else {
-      return nil
-    }
-
-    let length = hexSanitized.count
-
-    switch length {
-    case 6:
-      self.init(
-        red: Double((rgb & 0xFF0000) >> 16) / 255.0,
-        green: Double((rgb & 0x00FF00) >> 8) / 255.0,
-        blue: Double(rgb & 0x0000FF) / 255.0
-      )
-    case 8:
-      self.init(
-        red: Double((rgb & 0xFF00_0000) >> 24) / 255.0,
-        green: Double((rgb & 0x00FF_0000) >> 16) / 255.0,
-        blue: Double((rgb & 0x0000_FF00) >> 8) / 255.0,
-        opacity: Double(rgb & 0x0000_00FF) / 255.0
-      )
-    default:
-      return nil
-    }
-  }
 }

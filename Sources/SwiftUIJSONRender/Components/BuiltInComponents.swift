@@ -11,9 +11,14 @@ public struct BuiltInComponentsModule: ComponentModule {
       // Layout
       AnyComponentBuilder(StackBuilder.self),
       AnyComponentBuilder(CardBuilder.self),
+      AnyComponentBuilder(DividerBuilder.self),
+      AnyComponentBuilder(SpacerBuilder.self),
 
       // Content
       AnyComponentBuilder(TextBuilder.self),
+      AnyComponentBuilder(HeadingBuilder.self),
+      AnyComponentBuilder(ImageBuilder.self),
+      AnyComponentBuilder(IconBuilder.self),
 
       // Interactive
       AnyComponentBuilder(ButtonBuilder.self),
