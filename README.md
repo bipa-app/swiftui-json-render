@@ -49,6 +49,32 @@ struct ContentView: View {
 }
 ```
 
+## Streaming Rendering
+
+Use `StreamingJSONRenderer` to render partial JSON as it arrives:
+
+```swift
+import SwiftUIJSONRender
+
+struct StreamingAgentView: View {
+  @StateObject private var renderer = StreamingJSONRenderer()
+
+  var body: some View {
+    renderer.currentView
+      .onReceive(agentEventStream) { event in
+        if case .uiDelta(let delta) = event {
+          renderer.append(delta)
+        }
+      }
+      .onReceive(agentEventStream) { event in
+        if case .uiComplete = event {
+          renderer.complete()
+        }
+      }
+  }
+}
+```
+
 ## Components (Phase 1 + 2 + 3 + 4)
 
 ### Layout
