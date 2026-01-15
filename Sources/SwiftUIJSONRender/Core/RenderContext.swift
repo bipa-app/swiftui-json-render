@@ -167,7 +167,7 @@ struct UnknownComponentView: View {
   let typeName: String
 
   var body: some View {
-    Text("Unknown component: \(typeName)")
+    Image(systemName: "questionmark.circle.fill")
       .font(.caption)
       .foregroundColor(.red)
       .padding(8)

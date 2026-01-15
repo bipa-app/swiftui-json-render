@@ -98,19 +98,9 @@ private struct ErrorView: View {
   let message: String
 
   var body: some View {
-    VStack(spacing: 8) {
-      Image(systemName: "exclamationmark.triangle.fill")
-        .font(.largeTitle)
-        .foregroundColor(.orange)
-
-      Text("Render Error")
-        .font(.headline)
-
-      Text(message)
-        .font(.caption)
-        .foregroundColor(.secondary)
-        .multilineTextAlignment(.center)
-    }
+    Image(systemName: "exclamationmark.triangle.fill")
+      .font(.largeTitle)
+      .foregroundColor(.orange)
     .padding()
     .frame(maxWidth: .infinity)
     .background(Color.orange.opacity(0.1))
