@@ -11,6 +11,10 @@ import SwiftUI
         static var previews: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    previewSection("Versioning") {
+                        VersioningPreviewView()
+                    }
+
                     previewSection("Streaming") {
                         StreamingPreviewView()
                     }
@@ -422,6 +426,96 @@ import SwiftUI
                         if index == chunks.count - 1 {
                             renderer.complete()
                         }
+                    }
+                }
+            }
+        }
+
+        private struct VersioningPreviewView: View {
+            // JSON with unknown component
+            private let jsonWithUnknown = """
+                {
+                    "type": "Stack",
+                    "props": { "direction": "vertical", "spacing": 8 },
+                    "children": [
+                        { "type": "Text", "props": { "content": "Known component above" } },
+                        { "type": "FutureWidget", "props": { "data": "unknown" } },
+                        { "type": "Text", "props": { "content": "Known component below" } }
+                    ]
+                }
+                """
+
+            // JSON with incompatible version (too new)
+            private let jsonTooNew = """
+                {
+                    "schemaVersion": "99.0.0",
+                    "type": "Text",
+                    "props": { "content": "This won't render" }
+                }
+                """
+
+            // JSON with valid version
+            private let jsonWithVersion = """
+                {
+                    "schemaVersion": "1.0.0",
+                    "type": "Stack",
+                    "props": { "direction": "vertical", "spacing": 8 },
+                    "children": [
+                        { "type": "Text", "props": { "content": "Valid schema version 1.0.0" } }
+                    ]
+                }
+                """
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 16) {
+                    // Unknown component behaviors
+                    Text("Unknown Component Handling")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(".placeholder (default)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        JSONView(jsonWithUnknown)
+                            .unknownComponentBehavior(.placeholder)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(".skip")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        JSONView(jsonWithUnknown)
+                            .unknownComponentBehavior(.skip)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(".error")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        JSONView(jsonWithUnknown)
+                            .unknownComponentBehavior(.error)
+                    }
+
+                    Divider()
+
+                    // Version compatibility
+                    Text("Version Compatibility")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Valid version (1.0.0)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        JSONView(jsonWithVersion)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Incompatible version (99.0.0)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        JSONView(jsonTooNew)
                     }
                 }
             }
