@@ -1,24 +1,37 @@
 # SwiftUI JSON Render
 
-Render AI-generated, schema-constrained JSON into native SwiftUI components.
+[![Swift 5.9+](https://img.shields.io/badge/Swift-5.9+-orange.svg)](https://swift.org)
+[![iOS 15+](https://img.shields.io/badge/iOS-15+-blue.svg)](https://developer.apple.com/ios/)
+[![macOS 12+](https://img.shields.io/badge/macOS-12+-blue.svg)](https://developer.apple.com/macos/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Requirements
+A Swift library for rendering JSON-defined UI into native SwiftUI views. Designed for AI-generated interfaces, server-driven UI, and dynamic content rendering.
 
-- iOS 15+ / macOS 12+
-- Swift 5.9+
+## Features
 
-## Install
+- **21 Built-in Components** - Layout, content, interactive, feedback, and financial components
+- **Streaming Support** - Render partial JSON as it arrives from AI/LLM responses
+- **Schema Versioning** - Compatibility checking between JSON and library versions
+- **Theming** - Customizable colors, fonts, and spacing
+- **Custom Components** - Register your own component builders
+- **Action Handling** - Capture user interactions from buttons, inputs, and choices
+- **Validation** - Validate JSON structure before rendering
 
-Add the package to your project:
+## Installation
 
+### Swift Package Manager
+
+Add to your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/bipa-app/swiftui-json-render.git", from: "1.0.0")
+]
+```
+
+Or in Xcode: **File → Add Package Dependencies** and enter:
 ```
 https://github.com/bipa-app/swiftui-json-render.git
-```
-
-Or add it to `Package.swift`:
-
-```
-.package(url: "https://github.com/bipa-app/swiftui-json-render.git", from: "0.1.0")
 ```
 
 ## Quick Start
@@ -28,54 +41,91 @@ import SwiftUIJSONRender
 
 let json = """
 {
+  "schemaVersion": "1.0",
   "type": "Stack",
   "props": { "direction": "vertical", "spacing": 16 },
   "children": [
-    { "type": "Heading", "props": { "text": "Overview", "level": 2 } },
+    { "type": "Heading", "props": { "text": "Welcome", "level": 1 } },
     { "type": "Text", "props": { "content": "Hello from JSON!" } },
-    { "type": "Divider", "props": { "thickness": 1 } },
-    { "type": "Button", "props": { "label": "Continue", "action": { "name": "continue" } } }
+    { "type": "Button", "props": { "label": "Get Started", "action": { "name": "start" } } }
   ]
 }
 """
 
 struct ContentView: View {
-  var body: some View {
-    JSONView(json)
-      .onAction { action in
-        print("Action:", action.name)
-      }
-  }
+    var body: some View {
+        JSONView(json)
+            .onAction { action in
+                print("Action triggered:", action.name)
+            }
+    }
 }
+```
+
+## Schema Versioning
+
+The library uses semantic versioning for the JSON schema. Include a `schemaVersion` field in your JSON to enable compatibility checking:
+
+```json
+{
+  "schemaVersion": "1.0",
+  "type": "Stack",
+  "children": [...]
+}
+```
+
+### Version Compatibility
+
+| JSON Version | Library Behavior |
+|--------------|------------------|
+| Same major version | Fully compatible |
+| Newer minor version | Renders with warnings (unknown components handled gracefully) |
+| Older supported version | Renders normally |
+| Too old/new major version | Shows version error |
+
+### Unknown Component Handling
+
+Configure how unknown components are rendered:
+
+```swift
+JSONView(json)
+    .unknownComponentBehavior(.placeholder)  // Gray placeholder (default)
+    .unknownComponentBehavior(.skip)         // Render nothing
+    .unknownComponentBehavior(.error)        // Show error indicator
+```
+
+### Exporting Schema for AI
+
+Export the current schema for AI prompt engineering:
+
+```swift
+let schema = SchemaDocument.current
+print(schema.json())      // Full JSON schema
+print(schema.filename)    // "schema-v1.0.json"
+print(schema.version)     // SchemaVersion(1, 0, 0)
 ```
 
 ## Streaming Rendering
 
-Use `StreamingJSONRenderer` to render partial JSON as it arrives:
+Render JSON incrementally as it streams from an AI/LLM:
 
 ```swift
-import SwiftUIJSONRender
+struct StreamingView: View {
+    @StateObject private var renderer = StreamingJSONRenderer()
 
-struct StreamingAgentView: View {
-  @StateObject private var renderer = StreamingJSONRenderer()
-
-  var body: some View {
-    renderer.currentView
-      .onReceive(agentEventStream) { event in
-        if case .uiDelta(let delta) = event {
-          renderer.append(delta)
-        }
-      }
-      .onReceive(agentEventStream) { event in
-        if case .uiComplete = event {
-          renderer.complete()
-        }
-      }
-  }
+    var body: some View {
+        renderer.currentView
+            .task {
+                for await chunk in aiResponseStream {
+                    renderer.append(chunk)
+                }
+                renderer.complete()
+            }
+    }
 }
 ```
 
-## Components (Phase 1 + 2 + 3 + 4)
+## Components
 
 ### Layout
 
@@ -88,7 +138,7 @@ struct StreamingAgentView: View {
     "spacing": 8,
     "alignment": "leading | center | trailing"
   },
-  "children": [ ... ]
+  "children": [...]
 }
 ```
 
@@ -101,7 +151,7 @@ struct StreamingAgentView: View {
     "padding": 16,
     "cornerRadius": 12
   },
-  "children": [ ... ]
+  "children": [...]
 }
 ```
 
@@ -112,19 +162,14 @@ struct StreamingAgentView: View {
   "props": {
     "orientation": "horizontal | vertical",
     "thickness": 1,
-    "color": "#E5E7EB",
-    "padding": 8,
-    "length": 200
+    "color": "#E5E7EB"
   }
 }
 ```
 
 #### Spacer
 ```json
-{
-  "type": "Spacer",
-  "props": { "size": 24 }
-}
+{ "type": "Spacer", "props": { "size": 24 } }
 ```
 
 ### Content
@@ -136,8 +181,8 @@ struct StreamingAgentView: View {
   "props": {
     "content": "Hello, world!",
     "style": "body | caption | footnote | headline | title | largeTitle | subheadline",
-    "color": "#000000",
-    "weight": "regular | medium | semibold | bold | heavy | light | thin"
+    "weight": "regular | medium | semibold | bold | heavy | light | thin",
+    "color": "#000000"
   }
 }
 ```
@@ -148,7 +193,7 @@ struct StreamingAgentView: View {
   "type": "Heading",
   "props": {
     "text": "Section Title",
-    "level": 1 | 2 | 3
+    "level": 1
   }
 }
 ```
@@ -159,7 +204,6 @@ struct StreamingAgentView: View {
   "type": "Image",
   "props": {
     "url": "https://example.com/image.png",
-    "name": "local_asset",
     "contentMode": "fit | fill",
     "width": 200,
     "height": 120
@@ -186,13 +230,13 @@ struct StreamingAgentView: View {
 {
   "type": "Button",
   "props": {
-    "label": "Send PIX",
+    "label": "Submit",
     "style": "primary | secondary | destructive",
     "icon": "paperplane.fill",
     "disabled": false,
     "action": {
-      "name": "send_pix",
-      "params": { "preset": "contacts" }
+      "name": "submit",
+      "params": { "id": "123" }
     }
   }
 }
@@ -204,8 +248,8 @@ struct StreamingAgentView: View {
   "type": "AmountInput",
   "props": {
     "label": "Amount",
-    "placeholder": "0,00",
-    "currency": "BRL",
+    "placeholder": "0.00",
+    "currency": "USD",
     "action": { "name": "submit_amount" }
   }
 }
@@ -216,12 +260,12 @@ struct StreamingAgentView: View {
 {
   "type": "ConfirmDialog",
   "props": {
-    "title": "Confirm Transfer",
-    "message": "Send R$ 10.00?",
-    "confirmLabel": "Confirm",
-    "cancelLabel": "Cancel",
-    "triggerLabel": "Send",
-    "action": { "name": "send_pix" }
+    "title": "Confirm Action",
+    "message": "Are you sure?",
+    "confirmLabel": "Yes",
+    "cancelLabel": "No",
+    "triggerLabel": "Delete",
+    "action": { "name": "delete" }
   }
 }
 ```
@@ -231,12 +275,12 @@ struct StreamingAgentView: View {
 {
   "type": "ChoiceList",
   "props": {
-    "question": "Which PIX key?",
+    "question": "Select an option",
     "options": [
-      { "id": "cpf", "label": "CPF: ***456", "description": "Tax ID" },
-      { "id": "phone", "label": "Phone: +55 11 ****-5678" }
+      { "id": "opt1", "label": "Option 1", "description": "First choice" },
+      { "id": "opt2", "label": "Option 2" }
     ],
-    "action": { "name": "select_pix_key", "paramKey": "key_id" }
+    "action": { "name": "select", "paramKey": "option_id" }
   }
 }
 ```
@@ -248,19 +292,19 @@ struct StreamingAgentView: View {
 {
   "type": "Alert",
   "props": {
-    "title": "Bill Due Soon",
-    "message": "Your card bill of R$ 890 is due in 3 days",
+    "title": "Notice",
+    "message": "Something important happened",
     "severity": "info | warning | error | success",
     "dismissible": true,
     "action": {
-      "label": "Pay Now",
-      "name": "pay_bill"
+      "label": "View Details",
+      "name": "view_details"
     }
   }
 }
 ```
 
-### Financial (Phase 3)
+### Financial
 
 #### BalanceCard
 ```json
@@ -282,9 +326,9 @@ struct StreamingAgentView: View {
   "type": "TransactionRow",
   "props": {
     "id": "tx_123",
-    "description": "PIX to Maria",
+    "description": "Payment to John",
     "amount": -50000,
-    "date": "2026-01-14",
+    "date": "2025-01-14",
     "category": "transfer",
     "icon": "arrow.up.right"
   }
@@ -297,8 +341,8 @@ struct StreamingAgentView: View {
   "type": "TransactionList",
   "props": {
     "transactions": [
-      { "id": "tx1", "description": "PIX to Maria", "amount": -50000, "date": "2026-01-14" },
-      { "id": "tx2", "description": "Salary", "amount": 500000, "date": "2026-01-10" }
+      { "id": "tx1", "description": "Payment", "amount": -50000, "date": "2025-01-14" },
+      { "id": "tx2", "description": "Deposit", "amount": 500000, "date": "2025-01-10" }
     ]
   }
 }
@@ -310,9 +354,9 @@ struct StreamingAgentView: View {
   "type": "AssetPrice",
   "props": {
     "symbol": "BTC",
-    "price": 180000.23,
+    "price": 65000.23,
     "change": 1200.5,
-    "changePercent": 1.28
+    "changePercent": 1.88
   }
 }
 ```
@@ -324,8 +368,8 @@ struct StreamingAgentView: View {
   "props": {
     "title": "Spending by Category",
     "segments": [
-      { "label": "Food", "value": 45000, "color": "#FF6B6B" },
-      { "label": "Transport", "value": 22000, "color": "#4ECDC4" }
+      { "label": "Food", "value": 450, "color": "#FF6B6B" },
+      { "label": "Transport", "value": 220, "color": "#4ECDC4" }
     ],
     "showLegend": true
   }
@@ -339,46 +383,88 @@ struct StreamingAgentView: View {
   "props": {
     "title": "Portfolio Value",
     "points": [
-      { "x": "2026-01-10", "y": 120000 },
-      { "x": "2026-01-11", "y": 124000 }
+      { "x": "Jan", "y": 1200 },
+      { "x": "Feb", "y": 1350 },
+      { "x": "Mar", "y": 1280 }
     ],
     "color": "#45B7D1"
   }
 }
 ```
 
-## Theme
+## Theming
 
-Provide a custom theme by conforming to `JSONRenderTheme` and applying it via `.theme(...)`.
+Customize the appearance by implementing `JSONRenderTheme`:
 
 ```swift
 struct MyTheme: JSONRenderTheme {
-  static var primaryColor: Color { .purple }
-  static var surfaceColor: Color { Color(.systemGray6) }
-  static var headingFont: Font { .title2 }
+    static var primaryColor: Color { .purple }
+    static var secondaryColor: Color { .pink }
+    static var backgroundColor: Color { Color(.systemBackground) }
+    static var surfaceColor: Color { Color(.systemGray6) }
+    static var textPrimary: Color { .primary }
+    static var textSecondary: Color { .secondary }
+    static var headingFont: Font { .title2.bold() }
+    static var bodyFont: Font { .body }
+    static var spacingMD: CGFloat { 16 }
+    static var radiusMD: CGFloat { 12 }
 }
 
 JSONView(json)
-  .theme(MyTheme.self)
+    .theme(MyTheme.self)
 ```
 
 ## Custom Components
 
-Register your own builders and use them in JSON:
+Register custom component builders:
 
 ```swift
-struct MyBadgeBuilder: ComponentBuilder {
-  static var typeName: String { "Badge" }
-  static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    AnyView(Text(node.string("text") ?? "").padding(6).background(.blue))
-  }
+struct BadgeBuilder: ComponentBuilder {
+    static var typeName: String { "Badge" }
+
+    @MainActor
+    static func build(node: ComponentNode, context: RenderContext) -> AnyView {
+        let text = node.string("text") ?? ""
+        let color = node.string("color") ?? "blue"
+
+        return AnyView(
+            Text(text)
+                .font(.caption)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color(color))
+                .foregroundColor(.white)
+                .cornerRadius(4)
+        )
+    }
 }
 
-let registry = ComponentRegistry()
-registry.register(MyBadgeBuilder.self)
+// Register and use
+let registry = ComponentRegistry.shared.copy()
+registry.register(BadgeBuilder.self)
 
 JSONView(json)
-  .componentRegistry(registry)
+    .componentRegistry(registry)
+```
+
+## Action Handling
+
+Handle user interactions from interactive components:
+
+```swift
+JSONView(json)
+    .onAction { action in
+        switch action.name {
+        case "navigate":
+            let destination = action.string("destination")
+            // Handle navigation
+        case "submit":
+            let data = action.dictionary("data")
+            // Handle form submission
+        default:
+            print("Unknown action:", action.name)
+        }
+    }
 ```
 
 ## Validation
@@ -387,35 +473,39 @@ Validate JSON before rendering:
 
 ```swift
 let result = JSONValidator.validate(json)
-if result.isValid {
-  JSONView(json)
-}
-```
 
-## Schema
-
-The exported schema is available at `schema.json` for server-side validation and tooling.
-
-## Actions
-
-Interactive components can emit actions:
-
-```swift
-JSONView(json)
-  .onAction { action in
-    switch action.name {
-    case "navigate":
-      // handle navigation
-      break
-    default:
-      break
+switch result {
+case .valid:
+    // Safe to render
+    JSONView(json)
+case .invalid(let errors):
+    // Handle validation errors
+    for error in errors {
+        print("Validation error:", error)
     }
-  }
+}
 ```
 
 ## Example App
 
-A lightweight SwiftUI example is available under `Example/SwiftUIJSONRenderExample` and demonstrates:
-- Rendering a full JSON tree
-- Action handling callbacks
+A complete example app is available in the `Example/` directory demonstrating:
+
+- Full JSON tree rendering
+- Action handling
 - Streaming JSON updates
+- Custom theming
+- Component showcase
+
+## Requirements
+
+- iOS 15.0+ / macOS 12.0+
+- Swift 5.9+
+- Xcode 15.0+
+
+## License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+## Contributing
+
+Contributions are welcome! Please read our contributing guidelines and submit pull requests to the `main` branch.
