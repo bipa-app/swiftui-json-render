@@ -2,14 +2,34 @@ import Foundation
 
 /// Schema definitions for JSON-rendered components.
 public struct SchemaDocument: Codable, Sendable {
-  public let version: String
+  /// The schema version this document describes.
+  public let version: SchemaVersion
+
+  /// The minimum library version required to render this schema.
+  public let minimumLibraryVersion: SchemaVersion?
+
+  /// Components available in this schema version.
   public let components: [ComponentSchema]
 
+  /// The current schema document for this library version.
   public static let current = SchemaDocument(
-    version: "0.1.0",
+    version: SchemaVersion.current,
+    minimumLibraryVersion: SchemaVersion.minimumSupported,
     components: ComponentSchema.builtIn
   )
 
+  /// Creates a new schema document.
+  public init(
+    version: SchemaVersion,
+    minimumLibraryVersion: SchemaVersion? = nil,
+    components: [ComponentSchema]
+  ) {
+    self.version = version
+    self.minimumLibraryVersion = minimumLibraryVersion
+    self.components = components
+  }
+
+  /// Returns the schema as a JSON string.
   public func json(prettyPrinted: Bool = true) -> String {
     let encoder = JSONEncoder()
     if prettyPrinted {
@@ -18,12 +38,42 @@ public struct SchemaDocument: Codable, Sendable {
     guard let data = try? encoder.encode(self) else { return "{}" }
     return String(data: data, encoding: .utf8) ?? "{}"
   }
+
+  /// Returns the schema filename for this version.
+  public var filename: String {
+    "schema-v\(version.major).\(version.minor).json"
+  }
 }
 
 public struct ComponentSchema: Codable, Sendable {
   public let type: String
   public let children: Bool
   public let props: [ComponentPropSchema]
+
+  /// The version this component was introduced in (nil means original/1.0).
+  public let addedIn: SchemaVersion?
+
+  /// The version this component was deprecated in (nil means not deprecated).
+  public let deprecatedIn: SchemaVersion?
+
+  /// Message explaining the deprecation and migration path.
+  public let deprecationMessage: String?
+
+  public init(
+    type: String,
+    children: Bool,
+    props: [ComponentPropSchema],
+    addedIn: SchemaVersion? = nil,
+    deprecatedIn: SchemaVersion? = nil,
+    deprecationMessage: String? = nil
+  ) {
+    self.type = type
+    self.children = children
+    self.props = props
+    self.addedIn = addedIn
+    self.deprecatedIn = deprecatedIn
+    self.deprecationMessage = deprecationMessage
+  }
 }
 
 public struct ComponentPropSchema: Codable, Sendable {
@@ -34,13 +84,25 @@ public struct ComponentPropSchema: Codable, Sendable {
   public let items: PropItemsSchema?
   public let properties: [ComponentPropSchema]?
 
+  /// The version this prop was introduced in (nil means original/1.0).
+  public let addedIn: SchemaVersion?
+
+  /// The version this prop was deprecated in (nil means not deprecated).
+  public let deprecatedIn: SchemaVersion?
+
+  /// Message explaining the deprecation and migration path.
+  public let deprecationMessage: String?
+
   public init(
     name: String,
     type: String,
     required: Bool? = nil,
     enumValues: [String]? = nil,
     items: PropItemsSchema? = nil,
-    properties: [ComponentPropSchema]? = nil
+    properties: [ComponentPropSchema]? = nil,
+    addedIn: SchemaVersion? = nil,
+    deprecatedIn: SchemaVersion? = nil,
+    deprecationMessage: String? = nil
   ) {
     self.name = name
     self.type = type
@@ -48,6 +110,9 @@ public struct ComponentPropSchema: Codable, Sendable {
     self.enumValues = enumValues
     self.items = items
     self.properties = properties
+    self.addedIn = addedIn
+    self.deprecatedIn = deprecatedIn
+    self.deprecationMessage = deprecationMessage
   }
 }
 

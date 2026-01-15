@@ -5,9 +5,21 @@ import Foundation
 /// A `ComponentNode` describes a UI component with its type, properties, and optional children.
 /// This is the primary data structure used for JSON-to-SwiftUI rendering.
 ///
-/// ## Example JSON
+/// ## Example JSON (without version)
 /// ```json
 /// {
+///   "type": "Stack",
+///   "props": { "direction": "vertical", "spacing": 16 },
+///   "children": [
+///     { "type": "Text", "props": { "content": "Hello" } }
+///   ]
+/// }
+/// ```
+///
+/// ## Example JSON (with version)
+/// ```json
+/// {
+///   "schemaVersion": "1.0",
 ///   "type": "Stack",
 ///   "props": { "direction": "vertical", "spacing": 16 },
 ///   "children": [
@@ -25,19 +37,25 @@ public struct ComponentNode: Codable, Sendable, Equatable {
   /// Optional child components.
   public let children: [ComponentNode]?
 
+  /// Optional schema version (only present at root level).
+  public let schemaVersion: SchemaVersion?
+
   /// Creates a new component node.
   /// - Parameters:
   ///   - type: The component type identifier.
   ///   - props: Optional properties dictionary.
   ///   - children: Optional array of child nodes.
+  ///   - schemaVersion: Optional schema version (typically only at root).
   public init(
     type: String,
     props: [String: AnyCodable]? = nil,
-    children: [ComponentNode]? = nil
+    children: [ComponentNode]? = nil,
+    schemaVersion: SchemaVersion? = nil
   ) {
     self.type = type
     self.props = props
     self.children = children
+    self.schemaVersion = schemaVersion
   }
 }
 

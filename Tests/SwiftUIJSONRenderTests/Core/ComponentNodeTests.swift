@@ -282,4 +282,75 @@ struct ComponentNodeTests {
     #expect(node?.array("arrayProp")?.count == 3)
     #expect(node?.dictionary("objectProp")?["key"] as? String == "value")
   }
+
+  // MARK: - Schema Version
+
+  @Test("Parse JSON with schema version")
+  func testParseWithSchemaVersion() throws {
+    let json = """
+      {
+          "schemaVersion": "1.0.0",
+          "type": "Text",
+          "props": {"content": "Hello"}
+      }
+      """
+
+    let node = ComponentNode.from(json: json)
+
+    #expect(node != nil)
+    #expect(node?.schemaVersion != nil)
+    #expect(node?.schemaVersion == SchemaVersion(1, 0, 0))
+    #expect(node?.type == "Text")
+  }
+
+  @Test("Parse JSON without schema version")
+  func testParseWithoutSchemaVersion() throws {
+    let json = """
+      {"type": "Text", "props": {"content": "Hello"}}
+      """
+
+    let node = ComponentNode.from(json: json)
+
+    #expect(node != nil)
+    #expect(node?.schemaVersion == nil)
+    #expect(node?.type == "Text")
+  }
+
+  @Test("Parse JSON with minor version only")
+  func testParseWithMinorVersion() throws {
+    let json = """
+      {
+          "schemaVersion": "1.2",
+          "type": "Stack",
+          "children": []
+      }
+      """
+
+    let node = ComponentNode.from(json: json)
+
+    #expect(node != nil)
+    #expect(node?.schemaVersion == SchemaVersion(1, 2, 0))
+  }
+
+  @Test("ComponentNode with schema version is equatable")
+  func testSchemaVersionEquatable() throws {
+    let node1 = ComponentNode(
+      type: "Text",
+      props: ["content": "Hello"],
+      schemaVersion: SchemaVersion(1, 0, 0)
+    )
+    let node2 = ComponentNode(
+      type: "Text",
+      props: ["content": "Hello"],
+      schemaVersion: SchemaVersion(1, 0, 0)
+    )
+    let node3 = ComponentNode(
+      type: "Text",
+      props: ["content": "Hello"],
+      schemaVersion: SchemaVersion(2, 0, 0)
+    )
+
+    #expect(node1 == node2)
+    #expect(node1 != node3)
+  }
 }

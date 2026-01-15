@@ -37,9 +37,11 @@ public struct JSONView: View {
   @Environment(\.componentTheme) private var themeType
   @Environment(\.actionHandler) private var actionHandler
   @Environment(\.componentRegistry) private var registry
+  @Environment(\.unknownComponentBehavior) private var unknownComponentBehavior
 
   private let node: ComponentNode?
   private let parseError: String?
+  private let versionError: VersionError?
 
   /// Creates a JSONView from a JSON string.
   /// - Parameter json: A JSON string representing a component tree.
@@ -47,9 +49,11 @@ public struct JSONView: View {
     if let node = ComponentNode.from(json: json) {
       self.node = node
       self.parseError = nil
+      self.versionError = Self.checkVersion(of: node)
     } else {
       self.node = nil
       self.parseError = "Failed to parse JSON"
+      self.versionError = nil
     }
   }
 
@@ -58,6 +62,7 @@ public struct JSONView: View {
   public init(_ node: ComponentNode) {
     self.node = node
     self.parseError = nil
+    self.versionError = Self.checkVersion(of: node)
   }
 
   /// Creates a JSONView from JSON data.
@@ -66,17 +71,21 @@ public struct JSONView: View {
     if let node = ComponentNode.from(data: data) {
       self.node = node
       self.parseError = nil
+      self.versionError = Self.checkVersion(of: node)
     } else {
       self.node = nil
       self.parseError = "Failed to parse JSON data"
+      self.versionError = nil
     }
   }
 
   public var body: some View {
-    if let node = node {
-      renderNode(node)
-    } else if let error = parseError {
+    if let error = parseError {
       ErrorView(message: error)
+    } else if let versionError = versionError {
+      VersionErrorView(error: versionError)
+    } else if let node = node {
+      renderNode(node)
     }
   }
 
@@ -85,13 +94,48 @@ public struct JSONView: View {
     let context = RenderContext(
       themeType: themeType,
       actionHandler: actionHandler,
-      registry: registry
+      registry: registry,
+      unknownComponentBehavior: unknownComponentBehavior
     )
     return context.render(node)
   }
+
+  /// Checks if the node's schema version is compatible.
+  private static func checkVersion(of node: ComponentNode) -> VersionError? {
+    guard let version = node.schemaVersion else {
+      // No version specified - assume compatible (for backwards compatibility)
+      return nil
+    }
+
+    let result = SchemaVersion.checkCompatibility(of: version)
+    guard SchemaVersion.shouldRender(for: result) else {
+      return VersionError(jsonVersion: version, result: result)
+    }
+
+    return nil
+  }
 }
 
-// MARK: - Error View
+// MARK: - Version Error
+
+/// Represents a version compatibility error.
+struct VersionError {
+  let jsonVersion: SchemaVersion
+  let result: SchemaVersion.CompatibilityResult
+
+  var message: String {
+    switch result {
+    case .tooOld:
+      return "Schema version \(jsonVersion) is no longer supported. Minimum: \(SchemaVersion.minimumSupported)"
+    case .tooNew:
+      return "Schema version \(jsonVersion) requires a newer library. Current: \(SchemaVersion.current)"
+    case .compatible, .newerMinor, .olderSupported:
+      return "" // Should not happen
+    }
+  }
+}
+
+// MARK: - Error Views
 
 /// A view displayed when JSON parsing fails.
 private struct ErrorView: View {
@@ -104,6 +148,29 @@ private struct ErrorView: View {
     .padding()
     .frame(maxWidth: .infinity)
     .background(Color.orange.opacity(0.1))
+    .cornerRadius(8)
+  }
+}
+
+/// A view displayed when schema version is incompatible.
+private struct VersionErrorView: View {
+  let error: VersionError
+
+  var body: some View {
+    VStack(spacing: 8) {
+      Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
+        .font(.largeTitle)
+        .foregroundColor(.purple)
+      Text("Version Incompatible")
+        .font(.headline)
+      Text(error.message)
+        .font(.caption)
+        .foregroundColor(.secondary)
+        .multilineTextAlignment(.center)
+    }
+    .padding()
+    .frame(maxWidth: .infinity)
+    .background(Color.purple.opacity(0.1))
     .cornerRadius(8)
   }
 }
