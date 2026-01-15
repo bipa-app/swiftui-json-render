@@ -74,12 +74,12 @@ private struct StreamingLoadingView: View {
   var body: some View {
     ProgressView()
       .tint(themeType.primaryColor)
-    .frame(maxWidth: .infinity)
-    .padding(16)
-    .background(
-      RoundedRectangle(cornerRadius: themeType.radiusMD)
-        .fill(themeType.surfaceColor)
-    )
+      .frame(maxWidth: .infinity)
+      .padding(16)
+      .background(
+        RoundedRectangle(cornerRadius: themeType.radiusMD)
+          .fill(themeType.surfaceColor)
+      )
   }
 }
 

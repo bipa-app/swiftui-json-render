@@ -33,9 +33,9 @@ struct AnthropicClient {
     request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
 
     let system = """
-    Return ONLY valid JSON for a SwiftUIJSONRender ComponentNode tree.
-    Do not include markdown, comments, or extra text.
-    """
+      Return ONLY valid JSON for a SwiftUIJSONRender ComponentNode tree.
+      Do not include markdown, comments, or extra text.
+      """
 
     let body: [String: Any] = [
       "model": model,
@@ -48,7 +48,7 @@ struct AnthropicClient {
             ["type": "text", "text": prompt]
           ],
         ]
-      ]
+      ],
     ]
 
     request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])

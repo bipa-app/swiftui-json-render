@@ -14,30 +14,49 @@ public struct RenderContext {
   /// The component registry to use for looking up builders.
   public let registry: ComponentRegistry
 
+  /// The behavior for handling unknown components.
+  public let unknownComponentBehavior: UnknownComponentBehavior
+
   /// Creates a new render context.
   /// - Parameters:
   ///   - themeType: The theme type to use. Defaults to `DefaultTheme.self`.
   ///   - actionHandler: Optional action handler closure.
   ///   - registry: The component registry. Defaults to the shared registry.
+  ///   - unknownComponentBehavior: How to handle unknown components. Defaults to `.placeholder`.
   public init(
     themeType: any JSONRenderTheme.Type = DefaultTheme.self,
     actionHandler: ActionHandler? = nil,
-    registry: ComponentRegistry = .shared
+    registry: ComponentRegistry = .shared,
+    unknownComponentBehavior: UnknownComponentBehavior = .placeholder
   ) {
     self.themeType = themeType
     self.actionHandler = actionHandler
     self.registry = registry
+    self.unknownComponentBehavior = unknownComponentBehavior
   }
 
   /// Renders a child component node.
   /// - Parameter node: The component node to render.
-  /// - Returns: The rendered view, or an error view if the component type is unknown.
+  /// - Returns: The rendered view, or an appropriate fallback based on `unknownComponentBehavior`.
   @MainActor
   public func render(_ node: ComponentNode) -> AnyView {
     guard let builder = registry.builder(for: node.type) else {
-      return AnyView(UnknownComponentView(typeName: node.type))
+      return renderUnknownComponent(typeName: node.type)
     }
     return builder.build(node: node, context: self)
+  }
+
+  /// Renders a fallback view for an unknown component based on the configured behavior.
+  @MainActor
+  private func renderUnknownComponent(typeName: String) -> AnyView {
+    switch unknownComponentBehavior {
+    case .placeholder:
+      return AnyView(UnknownComponentPlaceholderView(typeName: typeName))
+    case .skip:
+      return AnyView(EmptyView())
+    case .error:
+      return AnyView(UnknownComponentErrorView(typeName: typeName))
+    }
   }
 
   /// Renders multiple child component nodes.
@@ -69,7 +88,8 @@ public struct RenderContext {
     RenderContext(
       themeType: themeType,
       actionHandler: actionHandler,
-      registry: registry
+      registry: registry,
+      unknownComponentBehavior: unknownComponentBehavior
     )
   }
 
@@ -80,7 +100,8 @@ public struct RenderContext {
     RenderContext(
       themeType: themeType,
       actionHandler: actionHandler,
-      registry: registry
+      registry: registry,
+      unknownComponentBehavior: unknownComponentBehavior
     )
   }
 
@@ -91,7 +112,20 @@ public struct RenderContext {
     RenderContext(
       themeType: themeType,
       actionHandler: actionHandler,
-      registry: registry
+      registry: registry,
+      unknownComponentBehavior: unknownComponentBehavior
+    )
+  }
+
+  /// Creates a new context with an updated unknown component behavior.
+  /// - Parameter behavior: The new behavior for unknown components.
+  /// - Returns: A new context with the updated behavior.
+  public func with(unknownComponentBehavior behavior: UnknownComponentBehavior) -> RenderContext {
+    RenderContext(
+      themeType: themeType,
+      actionHandler: actionHandler,
+      registry: registry,
+      unknownComponentBehavior: behavior
     )
   }
 }
@@ -160,18 +194,45 @@ extension RenderContext {
   public var radiusLG: CGFloat { themeType.radiusLG }
 }
 
-// MARK: - Unknown Component View
+// MARK: - Unknown Component Views
 
-/// A view displayed when a component type is not found in the registry.
-struct UnknownComponentView: View {
+/// A placeholder view displayed when a component type is not found in the registry.
+/// Shows a subtle gray indicator that something is missing.
+struct UnknownComponentPlaceholderView: View {
   let typeName: String
 
   var body: some View {
-    Image(systemName: "questionmark.circle.fill")
-      .font(.caption)
-      .foregroundColor(.red)
-      .padding(8)
-      .background(Color.red.opacity(0.1))
-      .cornerRadius(4)
+    RoundedRectangle(cornerRadius: 4)
+      .fill(Color.gray.opacity(0.15))
+      .frame(height: 24)
+      .overlay(
+        HStack(spacing: 4) {
+          Image(systemName: "questionmark.square.dashed")
+            .font(.caption2)
+          Text(typeName)
+            .font(.caption2)
+        }
+        .foregroundColor(.gray)
+      )
+  }
+}
+
+/// An error view displayed when a component type is not found in the registry.
+/// Shows a more prominent red indicator with the component type name.
+struct UnknownComponentErrorView: View {
+  let typeName: String
+
+  var body: some View {
+    HStack(spacing: 6) {
+      Image(systemName: "exclamationmark.triangle.fill")
+        .font(.caption)
+      Text("Unknown: \(typeName)")
+        .font(.caption)
+    }
+    .foregroundColor(.red)
+    .padding(.horizontal, 8)
+    .padding(.vertical, 4)
+    .background(Color.red.opacity(0.1))
+    .cornerRadius(4)
   }
 }
