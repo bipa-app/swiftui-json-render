@@ -51,6 +51,61 @@ struct JSONViewIntegrationTests {
     #expect(view != nil)
   }
 
+  @Test("Render heading")
+  func testRenderHeading() throws {
+    let json = """
+      {"type": "Heading", "props": {"text": "Section", "level": 2}}
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render icon")
+  func testRenderIcon() throws {
+    let json = """
+      {"type": "Icon", "props": {"name": "star.fill", "size": 20}}
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render image")
+  func testRenderImage() throws {
+    let json = """
+      {"type": "Image", "props": {"name": "local_asset", "contentMode": "fit"}}
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render divider")
+  func testRenderDivider() throws {
+    let json = """
+      {"type": "Divider", "props": {"thickness": 2, "color": "#CCCCCC"}}
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
+  @Test("Render spacer")
+  func testRenderSpacer() throws {
+    let json = """
+      {"type": "Spacer", "props": {"size": 12}}
+      """
+
+    let view = JSONView(json)
+
+    #expect(view != nil)
+  }
+
   @Test("Render button with action")
   func testRenderButtonWithAction() throws {
     let view = JSONView(TestJSON.buttonWithAction)
@@ -457,7 +512,7 @@ struct JSONViewIntegrationTests {
 
   // MARK: - Built-in Module
 
-  @Test("BuiltInComponentsModule has all Phase 1 components")
+  @Test("BuiltInComponentsModule has all Phase 2 components")
   func testBuiltInModuleComponents() throws {
     let module = BuiltInComponentsModule()
     let builders = module.builders
@@ -466,10 +521,15 @@ struct JSONViewIntegrationTests {
 
     #expect(typeNames.contains("Stack"))
     #expect(typeNames.contains("Card"))
+    #expect(typeNames.contains("Divider"))
+    #expect(typeNames.contains("Spacer"))
     #expect(typeNames.contains("Text"))
+    #expect(typeNames.contains("Heading"))
+    #expect(typeNames.contains("Image"))
+    #expect(typeNames.contains("Icon"))
     #expect(typeNames.contains("Button"))
     #expect(typeNames.contains("Alert"))
-    #expect(builders.count == 5)
+    #expect(builders.count == 10)
   }
 
   // MARK: - Complete Workflow
