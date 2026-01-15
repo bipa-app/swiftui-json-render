@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security reports
+    url: https://github.com/bipa-app/swiftui-json-render/security/advisories/new
+    about: Please report security vulnerabilities privately.
+  - name: Questions or discussions
+    url: https://github.com/bipa-app/swiftui-json-render/discussions
+    about: Ask questions and discuss ideas with the community.
