@@ -14,13 +14,19 @@ let package = Package(
       targets: ["SwiftUIJSONRender"]
     )
   ],
+  dependencies: [
+    .package(url: "https://github.com/apple/swift-testing.git", from: "0.12.0")
+  ],
   targets: [
     .target(
       name: "SwiftUIJSONRender"
     ),
     .testTarget(
       name: "SwiftUIJSONRenderTests",
-      dependencies: ["SwiftUIJSONRender"]
+      dependencies: [
+        "SwiftUIJSONRender",
+        .product(name: "Testing", package: "swift-testing"),
+      ]
     ),
   ]
 )
