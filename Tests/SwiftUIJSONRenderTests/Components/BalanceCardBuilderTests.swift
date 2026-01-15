@@ -23,7 +23,7 @@ struct BalanceCardBuilderTests {
     let context = makeContext()
     let view = BalanceCardBuilder.build(node: node, context: context)
 
-    #expect(node.int("brl") == 1245032)
+    #expect(node.int("brl") == 1_245_032)
     #expect(node.int("btc") == 234000)
     #expect(view != nil)
   }
@@ -38,7 +38,7 @@ struct BalanceCardBuilderTests {
     let context = makeContext()
     let view = BalanceCardBuilder.build(node: node, context: context)
 
-    #expect(node.int("usdt") == 50000000)
+    #expect(node.int("usdt") == 50_000_000)
     #expect(view != nil)
   }
 

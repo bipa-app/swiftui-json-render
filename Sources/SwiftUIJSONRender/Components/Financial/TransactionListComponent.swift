@@ -20,7 +20,8 @@ public struct TransactionListBuilder: ComponentBuilder {
   public static var typeName: String { "TransactionList" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let transactions = parseTransactions(node.dictionary("transactions"), node.array("transactions"))
+    let transactions = parseTransactions(
+      node.dictionary("transactions"), node.array("transactions"))
 
     return AnyView(
       VStack(alignment: .leading, spacing: 0) {

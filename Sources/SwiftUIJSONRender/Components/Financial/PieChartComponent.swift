@@ -1,6 +1,7 @@
 import SwiftUI
+
 #if canImport(Charts)
-import Charts
+  import Charts
 #endif
 
 /// Renders a PieChart component.
@@ -39,25 +40,25 @@ public struct PieChartBuilder: ComponentBuilder {
             .foregroundColor(context.textPrimary)
         }
 
-#if canImport(Charts)
-        if #available(iOS 17.0, macOS 14.0, *) {
-          if !segments.isEmpty {
-            Chart(segments) { segment in
-              SectorMark(
-                angle: .value("Value", segment.value)
-              )
-              .foregroundStyle(segment.color)
+        #if canImport(Charts)
+          if #available(iOS 17.0, macOS 14.0, *) {
+            if !segments.isEmpty {
+              Chart(segments) { segment in
+                SectorMark(
+                  angle: .value("Value", segment.value)
+                )
+                .foregroundStyle(segment.color)
+              }
+              .frame(height: 180)
+            } else {
+              EmptyStateView(context: context)
             }
-            .frame(height: 180)
           } else {
             EmptyStateView(context: context)
           }
-        } else {
+        #else
           EmptyStateView(context: context)
-        }
-#else
-        EmptyStateView(context: context)
-#endif
+        #endif
 
         if showLegend {
           VStack(alignment: .leading, spacing: context.spacingXS) {

@@ -1,6 +1,7 @@
 import SwiftUI
+
 #if canImport(Charts)
-import Charts
+  import Charts
 #endif
 
 /// Renders a LineChart component.
@@ -29,7 +30,8 @@ public struct LineChartBuilder: ComponentBuilder {
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
     let title = node.string("title")
-    let color = ColorParser.parse(node.string("color"), default: context.primaryColor, context: context)
+    let color = ColorParser.parse(
+      node.string("color"), default: context.primaryColor, context: context)
     let points = parsePoints(node.array("points"))
 
     return AnyView(
@@ -40,26 +42,26 @@ public struct LineChartBuilder: ComponentBuilder {
             .foregroundColor(context.textPrimary)
         }
 
-#if canImport(Charts)
-        if #available(iOS 17.0, macOS 14.0, *) {
-          if !points.isEmpty {
-            Chart(points) { point in
-              LineMark(
-                x: .value("X", point.x),
-                y: .value("Y", point.y)
-              )
-              .foregroundStyle(color)
+        #if canImport(Charts)
+          if #available(iOS 17.0, macOS 14.0, *) {
+            if !points.isEmpty {
+              Chart(points) { point in
+                LineMark(
+                  x: .value("X", point.x),
+                  y: .value("Y", point.y)
+                )
+                .foregroundStyle(color)
+              }
+              .frame(height: 180)
+            } else {
+              EmptyLineStateView(context: context)
             }
-            .frame(height: 180)
           } else {
             EmptyLineStateView(context: context)
           }
-        } else {
+        #else
           EmptyLineStateView(context: context)
-        }
-#else
-        EmptyLineStateView(context: context)
-#endif
+        #endif
       }
       .padding(context.spacingMD)
       .background(context.surfaceColor)

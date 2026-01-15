@@ -39,9 +39,11 @@ public struct BalanceCardBuilder: ComponentBuilder {
           .foregroundColor(context.textPrimary)
 
         BalanceRow(label: "BRL", value: FinancialFormatter.formatBRL(cents: brl), context: context)
-        BalanceRow(label: "BTC", value: FinancialFormatter.formatBTC(satoshis: btc), context: context)
+        BalanceRow(
+          label: "BTC", value: FinancialFormatter.formatBTC(satoshis: btc), context: context)
         if let usdt = usdt {
-          BalanceRow(label: "USDT", value: FinancialFormatter.formatUSDT(micros: usdt), context: context)
+          BalanceRow(
+            label: "USDT", value: FinancialFormatter.formatUSDT(micros: usdt), context: context)
         }
 
         if showChange, let brlChange = brlChange {

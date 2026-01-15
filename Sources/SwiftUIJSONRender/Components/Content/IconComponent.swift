@@ -24,7 +24,8 @@ public struct IconBuilder: ComponentBuilder {
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
     let name = node.string("name") ?? "questionmark"
     let size = CGFloat(node.double("size") ?? 16)
-    let color = ColorParser.parse(node.string("color"), default: context.textPrimary, context: context)
+    let color = ColorParser.parse(
+      node.string("color"), default: context.textPrimary, context: context)
 
     return AnyView(
       Image(systemName: name)

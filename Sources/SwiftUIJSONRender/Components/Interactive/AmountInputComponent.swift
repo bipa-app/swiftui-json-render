@@ -63,12 +63,12 @@ private struct AmountInputView: View {
           .font(context.bodyFont)
           .foregroundColor(context.textSecondary)
         Group {
-#if os(iOS)
-          TextField(placeholder, text: $text)
-            .keyboardType(.decimalPad)
-#else
-          TextField(placeholder, text: $text)
-#endif
+          #if os(iOS)
+            TextField(placeholder, text: $text)
+              .keyboardType(.decimalPad)
+          #else
+            TextField(placeholder, text: $text)
+          #endif
         }
         .font(context.bodyFont)
         .foregroundColor(context.textPrimary)
