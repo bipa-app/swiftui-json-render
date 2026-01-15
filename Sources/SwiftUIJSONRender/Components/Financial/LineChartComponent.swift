@@ -39,7 +39,7 @@ public struct LineChartBuilder: ComponentBuilder {
         if let title = title {
           Text(title)
             .font(context.headingFont)
-            .foregroundColor(context.textPrimary)
+            .foregroundStyle(context.textPrimary)
         }
 
         #if canImport(Charts)
@@ -95,7 +95,7 @@ private struct EmptyLineStateView: View {
   var body: some View {
     Text(context.noDataAvailable)
       .font(context.captionFont)
-      .foregroundColor(context.textSecondary)
+      .foregroundStyle(context.textSecondary)
       .frame(maxWidth: .infinity, minHeight: context.emptyStateHeight)
   }
 }

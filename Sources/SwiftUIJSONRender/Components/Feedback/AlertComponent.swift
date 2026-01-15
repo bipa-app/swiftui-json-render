@@ -66,18 +66,18 @@ private struct AlertView: View {
         // Icon
         Image(systemName: iconName)
           .font(.title3)
-          .foregroundColor(severityColor)
+          .foregroundStyle(severityColor)
 
         // Content
         VStack(alignment: .leading, spacing: context.spacingXS) {
           Text(title)
             .font(context.headingFont)
-            .foregroundColor(context.textPrimary)
+            .foregroundStyle(context.textPrimary)
 
           if let message = message {
             Text(message)
               .font(context.bodyFont)
-              .foregroundColor(context.textSecondary)
+              .foregroundStyle(context.textSecondary)
           }
 
           // Action button
@@ -88,7 +88,7 @@ private struct AlertView: View {
               context.handleAction(actionValue)
             }
             .font(context.bodyFont)
-            .foregroundColor(severityColor)
+            .foregroundStyle(severityColor)
             .padding(.top, context.spacingXS)
           }
         }
@@ -104,7 +104,7 @@ private struct AlertView: View {
           } label: {
             Image(systemName: "xmark")
               .font(.caption)
-              .foregroundColor(context.textSecondary)
+              .foregroundStyle(context.textSecondary)
           }
         }
       }

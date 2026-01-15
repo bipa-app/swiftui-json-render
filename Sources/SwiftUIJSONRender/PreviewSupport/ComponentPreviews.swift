@@ -471,12 +471,12 @@ import SwiftUI
           // Unknown component behaviors
           Text("Unknown Component Handling")
             .font(.subheadline)
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
 
           VStack(alignment: .leading, spacing: 4) {
             Text(".placeholder (default)")
               .font(.caption)
-              .foregroundColor(.secondary)
+              .foregroundStyle(.secondary)
             JSONView(jsonWithUnknown)
               .unknownComponentBehavior(.placeholder)
           }
@@ -484,7 +484,7 @@ import SwiftUI
           VStack(alignment: .leading, spacing: 4) {
             Text(".skip")
               .font(.caption)
-              .foregroundColor(.secondary)
+              .foregroundStyle(.secondary)
             JSONView(jsonWithUnknown)
               .unknownComponentBehavior(.skip)
           }
@@ -492,7 +492,7 @@ import SwiftUI
           VStack(alignment: .leading, spacing: 4) {
             Text(".error")
               .font(.caption)
-              .foregroundColor(.secondary)
+              .foregroundStyle(.secondary)
             JSONView(jsonWithUnknown)
               .unknownComponentBehavior(.error)
           }
@@ -502,19 +502,19 @@ import SwiftUI
           // Version compatibility
           Text("Version Compatibility")
             .font(.subheadline)
-            .foregroundColor(.secondary)
+            .foregroundStyle(.secondary)
 
           VStack(alignment: .leading, spacing: 4) {
             Text("Valid version (1.0.0)")
               .font(.caption)
-              .foregroundColor(.secondary)
+              .foregroundStyle(.secondary)
             JSONView(jsonWithVersion)
           }
 
           VStack(alignment: .leading, spacing: 4) {
             Text("Incompatible version (99.0.0)")
               .font(.caption)
-              .foregroundColor(.secondary)
+              .foregroundStyle(.secondary)
             JSONView(jsonTooNew)
           }
         }

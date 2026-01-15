@@ -36,7 +36,7 @@ public struct BalanceCardBuilder: ComponentBuilder {
       VStack(alignment: .leading, spacing: context.spacingSM) {
         Text(context.balancesTitle)
           .font(context.headingFont)
-          .foregroundColor(context.textPrimary)
+          .foregroundStyle(context.textPrimary)
 
         BalanceRow(label: "BRL", value: FinancialFormatter.formatBRL(cents: brl), context: context)
         BalanceRow(
@@ -52,7 +52,7 @@ public struct BalanceCardBuilder: ComponentBuilder {
             Text(FinancialFormatter.formatPercent(brlChange))
           }
           .font(context.captionFont)
-          .foregroundColor(brlChange >= 0 ? context.successColor : context.errorColor)
+          .foregroundStyle(brlChange >= 0 ? context.successColor : context.errorColor)
         }
       }
       .padding(context.spacingMD)
@@ -72,11 +72,11 @@ private struct BalanceRow: View {
     HStack {
       Text(label)
         .font(context.bodyFont)
-        .foregroundColor(context.textSecondary)
+        .foregroundStyle(context.textSecondary)
       Spacer()
       Text(value)
         .font(context.bodyFont)
-        .foregroundColor(context.textPrimary)
+        .foregroundStyle(context.textPrimary)
     }
   }
 }

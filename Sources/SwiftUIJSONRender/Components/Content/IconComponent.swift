@@ -30,7 +30,7 @@ public struct IconBuilder: ComponentBuilder {
     return AnyView(
       Image(systemName: name)
         .font(.system(size: size))
-        .foregroundColor(color)
+        .foregroundStyle(color)
     )
   }
 }

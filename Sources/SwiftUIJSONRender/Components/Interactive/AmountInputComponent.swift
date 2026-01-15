@@ -55,13 +55,13 @@ private struct AmountInputView: View {
       if let label = label {
         Text(label)
           .font(context.captionFont)
-          .foregroundColor(context.textSecondary)
+          .foregroundStyle(context.textSecondary)
       }
 
       HStack {
         Text(currency)
           .font(context.bodyFont)
-          .foregroundColor(context.textSecondary)
+          .foregroundStyle(context.textSecondary)
         Group {
           #if os(iOS)
             TextField(placeholder, text: $text)
@@ -71,7 +71,7 @@ private struct AmountInputView: View {
           #endif
         }
         .font(context.bodyFont)
-        .foregroundColor(context.textPrimary)
+        .foregroundStyle(context.textPrimary)
         .onSubmit { context.handleAction(actionValue) }
       }
       .padding(context.spacingSM)

@@ -316,7 +316,7 @@ struct UnknownComponentPlaceholderView: View {
           Text(typeName)
             .font(.caption2)
         }
-        .foregroundColor(.gray)
+        .foregroundStyle(.gray)
       )
   }
 }
@@ -333,7 +333,7 @@ struct UnknownComponentErrorView: View {
       Text("Unknown: \(typeName)")
         .font(.caption)
     }
-    .foregroundColor(.red)
+    .foregroundStyle(.red)
     .padding(.horizontal, 8)
     .padding(.vertical, 4)
     .background(Color.red.opacity(0.1))

@@ -71,17 +71,17 @@ private struct TransactionRowView: View {
     HStack(spacing: context.spacingSM) {
       if let icon = transaction.icon {
         Image(systemName: icon)
-          .foregroundColor(context.primaryColor)
+          .foregroundStyle(context.primaryColor)
       }
 
       VStack(alignment: .leading, spacing: context.spacingXS) {
         Text(transaction.description)
           .font(context.bodyFont)
-          .foregroundColor(context.textPrimary)
+          .foregroundStyle(context.textPrimary)
         if let category = transaction.category, !category.isEmpty {
           Text(category)
             .font(context.captionFont)
-            .foregroundColor(context.textSecondary)
+            .foregroundStyle(context.textSecondary)
         }
       }
 
@@ -90,11 +90,11 @@ private struct TransactionRowView: View {
       VStack(alignment: .trailing, spacing: context.spacingXS) {
         Text(FinancialFormatter.formatBRL(cents: transaction.amount))
           .font(context.bodyFont)
-          .foregroundColor(transaction.amount < 0 ? context.errorColor : context.successColor)
+          .foregroundStyle(transaction.amount < 0 ? context.errorColor : context.successColor)
         if !transaction.date.isEmpty {
           Text(transaction.date)
             .font(context.captionFont)
-            .foregroundColor(context.textSecondary)
+            .foregroundStyle(context.textSecondary)
         }
       }
     }

@@ -70,7 +70,7 @@ private struct ButtonView: View {
       .padding(.vertical, context.spacingSM)
       .frame(maxWidth: style == "primary" ? .infinity : nil)
       .background(backgroundColor)
-      .foregroundColor(foregroundColor)
+      .foregroundStyle(foregroundColor)
       .clipShape(.rect(cornerRadius: context.radiusSM))
     }
     .disabled(disabled)

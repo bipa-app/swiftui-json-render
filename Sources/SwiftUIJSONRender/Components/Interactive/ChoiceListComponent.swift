@@ -83,7 +83,7 @@ private struct ChoiceListView: View {
     VStack(alignment: .leading, spacing: context.spacingSM) {
       Text(question)
         .font(context.headingFont)
-        .foregroundColor(context.textPrimary)
+        .foregroundStyle(context.textPrimary)
 
       ForEach(options) { option in
         Button {
@@ -92,11 +92,11 @@ private struct ChoiceListView: View {
           VStack(alignment: .leading, spacing: context.spacingXS) {
             Text(option.label)
               .font(context.bodyFont)
-              .foregroundColor(context.textPrimary)
+              .foregroundStyle(context.textPrimary)
             if let description = option.description {
               Text(description)
                 .font(context.captionFont)
-                .foregroundColor(context.textSecondary)
+                .foregroundStyle(context.textSecondary)
             }
           }
           .frame(maxWidth: .infinity, alignment: .leading)

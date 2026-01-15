@@ -162,7 +162,7 @@ private struct ErrorView: View {
   var body: some View {
     Image(systemName: "exclamationmark.triangle.fill")
       .font(.largeTitle)
-      .foregroundColor(warningColor)
+      .foregroundStyle(warningColor)
       .padding()
       .frame(maxWidth: .infinity)
       .background(warningColor.opacity(alertBackgroundOpacity))
@@ -182,12 +182,12 @@ private struct VersionErrorView: View {
     VStack(spacing: 8) {
       Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
         .font(.largeTitle)
-        .foregroundColor(primaryColor)
+        .foregroundStyle(primaryColor)
       Text("Version Incompatible")
         .font(.headline)
       Text(error.message)
         .font(.caption)
-        .foregroundColor(textSecondary)
+        .foregroundStyle(textSecondary)
         .multilineTextAlignment(.center)
     }
     .padding()

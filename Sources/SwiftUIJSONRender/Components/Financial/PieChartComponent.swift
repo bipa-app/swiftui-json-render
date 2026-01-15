@@ -37,7 +37,7 @@ public struct PieChartBuilder: ComponentBuilder {
         if let title = title {
           Text(title)
             .font(context.headingFont)
-            .foregroundColor(context.textPrimary)
+            .foregroundStyle(context.textPrimary)
         }
 
         #if canImport(Charts)
@@ -69,7 +69,7 @@ public struct PieChartBuilder: ComponentBuilder {
                   .frame(width: context.legendIndicatorSize, height: context.legendIndicatorSize)
                 Text(segment.label)
                   .font(context.captionFont)
-                  .foregroundColor(context.textSecondary)
+                  .foregroundStyle(context.textSecondary)
               }
             }
           }
@@ -110,7 +110,7 @@ private struct EmptyStateView: View {
   var body: some View {
     Text(context.noDataAvailable)
       .font(context.captionFont)
-      .foregroundColor(context.textSecondary)
+      .foregroundStyle(context.textSecondary)
       .frame(maxWidth: .infinity, minHeight: context.emptyStateHeight)
   }
 }
