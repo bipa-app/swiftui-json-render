@@ -276,6 +276,15 @@ extension ComponentNode {
     enumValue(key) ?? defaultValue
   }
 
+  /// Decodes props into a strongly typed model.
+  /// - Parameter type: The model type to decode.
+  /// - Returns: The decoded props or `nil` if decoding fails.
+  public func decodeProps<T: Decodable>(_ type: T.Type) -> T? {
+    guard let props else { return nil }
+    guard let data = try? JSONEncoder().encode(props) else { return nil }
+    return try? JSONDecoder().decode(T.self, from: data)
+  }
+
   /// Retrieves an integer property by key.
   /// - Parameter key: The property key.
   /// - Returns: The integer value, or `nil` if not found or not an integer.

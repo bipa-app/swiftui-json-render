@@ -24,16 +24,26 @@ import SwiftUI
 /// - `cancelLabel`: Cancel button label
 /// - `triggerLabel`: Label for the trigger button
 /// - `action`: Action to trigger on confirm
+private struct ConfirmDialogProps: Decodable {
+  let title: String?
+  let message: String?
+  let confirmLabel: String?
+  let cancelLabel: String?
+  let triggerLabel: String?
+  let action: Action?
+}
+
 public struct ConfirmDialogBuilder: ComponentBuilder {
   public static var typeName: String { "ConfirmDialog" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let title = node.string("title") ?? context.confirmDialogTitle
-    let message = node.string("message")
-    let confirmLabel = node.string("confirmLabel") ?? context.confirmButtonLabel
-    let cancelLabel = node.string("cancelLabel") ?? context.cancelButtonLabel
-    let triggerLabel = node.string("triggerLabel") ?? context.confirmButtonLabel
-    let actionValue = node.props?["action"]
+    let props = node.decodeProps(ConfirmDialogProps.self)
+    let title = props?.title ?? node.string("title") ?? context.confirmDialogTitle
+    let message = props?.message ?? node.string("message")
+    let confirmLabel = props?.confirmLabel ?? node.string("confirmLabel") ?? context.confirmButtonLabel
+    let cancelLabel = props?.cancelLabel ?? node.string("cancelLabel") ?? context.cancelButtonLabel
+    let triggerLabel = props?.triggerLabel ?? node.string("triggerLabel") ?? context.confirmButtonLabel
+    let action = props?.action ?? Action.from(node.props?["action"])
 
     return AnyView(
       ConfirmDialogView(
@@ -42,7 +52,7 @@ public struct ConfirmDialogBuilder: ComponentBuilder {
         confirmLabel: confirmLabel,
         cancelLabel: cancelLabel,
         triggerLabel: triggerLabel,
-        actionValue: actionValue,
+        action: action,
         context: context
       )
     )
@@ -55,7 +65,7 @@ private struct ConfirmDialogView: View {
   let confirmLabel: String
   let cancelLabel: String
   let triggerLabel: String
-  let actionValue: AnyCodable?
+  let action: Action?
   let context: RenderContext
 
   @State private var isPresented = false
@@ -66,7 +76,9 @@ private struct ConfirmDialogView: View {
     }
     .confirmationDialog(title, isPresented: $isPresented, titleVisibility: .visible) {
       Button(confirmLabel) {
-        context.handleAction(actionValue)
+        if let action {
+          context.handle(action)
+        }
       }
       Button(cancelLabel, role: .cancel) {}
     } message: {
