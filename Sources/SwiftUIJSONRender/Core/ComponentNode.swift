@@ -264,6 +264,18 @@ extension ComponentNode {
     enumValue(key) ?? defaultValue
   }
 
+  /// Retrieves a case-insensitive enum-backed string property with a default value.
+  /// - Parameters:
+  ///   - key: The property key.
+  ///   - defaultValue: The default value to return if the property is not found.
+  /// - Returns: The enum value or the default.
+  public func enumValue<T: RawRepresentable & CaseIterable>(
+    _ key: String,
+    default defaultValue: T
+  ) -> T where T.RawValue == String {
+    enumValue(key) ?? defaultValue
+  }
+
   /// Retrieves an integer property by key.
   /// - Parameter key: The property key.
   /// - Returns: The integer value, or `nil` if not found or not an integer.
