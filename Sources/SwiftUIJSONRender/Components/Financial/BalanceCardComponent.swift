@@ -22,15 +22,24 @@ import SwiftUI
 /// - `usdt`: Balance in micros (optional)
 /// - `showChange`: Show 24h change (optional)
 /// - `brlChange`: Percentage change (optional)
+private struct BalanceCardProps: Decodable {
+  let brl: Int?
+  let btc: Int?
+  let usdt: Int?
+  let showChange: Bool?
+  let brlChange: Double?
+}
+
 public struct BalanceCardBuilder: ComponentBuilder {
   public static var typeName: String { "BalanceCard" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let brl = node.int("brl") ?? 0
-    let btc = node.int("btc") ?? 0
-    let usdt = node.int("usdt")
-    let showChange = node.bool("showChange") ?? false
-    let brlChange = node.double("brlChange")
+    let props = node.decodeProps(BalanceCardProps.self)
+    let brl = props?.brl ?? node.int("brl") ?? 0
+    let btc = props?.btc ?? node.int("btc") ?? 0
+    let usdt = props?.usdt ?? node.int("usdt")
+    let showChange = props?.showChange ?? node.bool("showChange") ?? false
+    let brlChange = props?.brlChange ?? node.double("brlChange")
 
     return AnyView(
       VStack(alignment: .leading, spacing: context.spacingSM) {

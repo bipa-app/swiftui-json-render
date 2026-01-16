@@ -31,15 +31,24 @@ public enum ButtonStyle: String, Sendable, Codable, CaseIterable {
 /// - `icon`: SF Symbol name (optional)
 /// - `disabled`: Whether the button is disabled (default: false)
 /// - `action`: Action to trigger when tapped
+private struct ButtonProps: Decodable {
+  let label: String?
+  let style: ButtonStyle?
+  let icon: String?
+  let disabled: Bool?
+  let action: Action?
+}
+
 public struct ButtonBuilder: ComponentBuilder {
   public static var typeName: String { "Button" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let label = node.string("label") ?? context.defaultButtonLabel
-    let style = node.enumValue("style", default: ButtonStyle.primary)
-    let icon = node.string("icon")
-    let disabled = node.bool("disabled") ?? false
-    let actionValue = node.props?["action"]
+    let props = node.decodeProps(ButtonProps.self)
+    let label = props?.label ?? node.string("label") ?? context.defaultButtonLabel
+    let style = props?.style ?? node.enumValue("style", default: ButtonStyle.primary)
+    let icon = props?.icon ?? node.string("icon")
+    let disabled = props?.disabled ?? node.bool("disabled") ?? false
+    let action = props?.action ?? Action.from(node.props?["action"])
 
     return AnyView(
       ButtonView(
@@ -47,7 +56,7 @@ public struct ButtonBuilder: ComponentBuilder {
         style: style,
         icon: icon,
         disabled: disabled,
-        actionValue: actionValue,
+        action: action,
         context: context
       )
     )
@@ -61,7 +70,7 @@ private struct ButtonView: View {
   let style: ButtonStyle
   let icon: String?
   let disabled: Bool
-  let actionValue: AnyCodable?
+  let action: Action?
   let context: RenderContext
 
   var body: some View {
@@ -106,6 +115,8 @@ private struct ButtonView: View {
   }
 
   private func handleTap() {
-    context.handleAction(actionValue)
+    if let action {
+      context.handle(action)
+    }
   }
 }

@@ -20,14 +20,22 @@ import SwiftUI
 /// - `price`: Current price
 /// - `change`: Absolute change
 /// - `changePercent`: Percentage change
+private struct AssetPriceProps: Decodable {
+  let symbol: String?
+  let price: Double?
+  let change: Double?
+  let changePercent: Double?
+}
+
 public struct AssetPriceBuilder: ComponentBuilder {
   public static var typeName: String { "AssetPrice" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let symbol = node.string("symbol") ?? "ASSET"
-    let price = node.double("price") ?? 0
-    let change = node.double("change")
-    let changePercent = node.double("changePercent")
+    let props = node.decodeProps(AssetPriceProps.self)
+    let symbol = props?.symbol ?? node.string("symbol") ?? "ASSET"
+    let price = props?.price ?? node.double("price") ?? 0
+    let change = props?.change ?? node.double("change")
+    let changePercent = props?.changePercent ?? node.double("changePercent")
 
     return AnyView(
       HStack {

@@ -40,14 +40,22 @@ public enum TextWeight: String, Sendable, Codable, CaseIterable {
 /// - `style`: "body" (default), "caption", "footnote", "headline", "title", "largeTitle"
 /// - `weight`: "regular" (default), "medium", "semibold", "bold"
 /// - `color`: Hex color string (e.g., "#FF5733") or named color
+private struct TextProps: Decodable {
+  let content: String?
+  let style: TextStyle?
+  let weight: TextWeight?
+  let color: String?
+}
+
 public struct TextBuilder: ComponentBuilder {
   public static var typeName: String { "Text" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let content = node.string("content") ?? ""
-    let style = node.enumValue("style", default: TextStyle.body)
-    let weight = node.enumValue("weight", default: TextWeight.regular)
-    let colorString = node.string("color")
+    let props = node.decodeProps(TextProps.self)
+    let content = props?.content ?? node.string("content") ?? ""
+    let style = props?.style ?? node.enumValue("style", default: TextStyle.body)
+    let weight = props?.weight ?? node.enumValue("weight", default: TextWeight.regular)
+    let colorString = props?.color ?? node.string("color")
 
     let font = parseFont(style: style, context: context)
     let fontWeight = parseFontWeight(weight)

@@ -30,13 +30,22 @@ public enum StackAlignment: String, Sendable, Codable, CaseIterable {
 /// - `direction`: "vertical" (default) or "horizontal"
 /// - `spacing`: Number for spacing between children (default: 8)
 /// - `alignment`: "leading", "center" (default), or "trailing"
+private struct StackProps: Decodable {
+  let direction: StackDirection?
+  let spacing: Double?
+  let alignment: StackAlignment?
+}
+
 public struct StackBuilder: ComponentBuilder {
   public static var typeName: String { "Stack" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let direction = node.enumValue("direction", default: StackDirection.vertical)
-    let spacing = CGFloat(node.double("spacing") ?? Double(context.spacingSM))
-    let alignment = parseAlignment(node.enumValue("alignment", default: StackAlignment.center))
+    let props = node.decodeProps(StackProps.self)
+    let direction = props?.direction ?? node.enumValue("direction", default: StackDirection.vertical)
+    let spacing = CGFloat(props?.spacing ?? node.double("spacing") ?? Double(context.spacingSM))
+    let alignment = parseAlignment(
+      props?.alignment ?? node.enumValue("alignment", default: StackAlignment.center)
+    )
 
     let children = context.renderChildren(node.children)
 

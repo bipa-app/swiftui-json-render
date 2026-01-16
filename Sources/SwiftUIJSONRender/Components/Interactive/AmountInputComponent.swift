@@ -20,21 +20,29 @@ import SwiftUI
 /// - `placeholder`: Placeholder text
 /// - `currency`: Currency code (default: "BRL")
 /// - `action`: Optional action to trigger on submit
+private struct AmountInputProps: Decodable {
+  let label: String?
+  let placeholder: String?
+  let currency: String?
+  let action: Action?
+}
+
 public struct AmountInputBuilder: ComponentBuilder {
   public static var typeName: String { "AmountInput" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let label = node.string("label")
-    let placeholder = node.string("placeholder") ?? ""
-    let currency = node.string("currency", default: "BRL")
-    let actionValue = node.props?["action"]
+    let props = node.decodeProps(AmountInputProps.self)
+    let label = props?.label ?? node.string("label")
+    let placeholder = props?.placeholder ?? node.string("placeholder") ?? ""
+    let currency = props?.currency ?? node.string("currency", default: "BRL")
+    let action = props?.action ?? Action.from(node.props?["action"])
 
     return AnyView(
       AmountInputView(
         label: label,
         placeholder: placeholder,
         currency: currency,
-        actionValue: actionValue,
+        action: action,
         context: context
       )
     )
@@ -45,7 +53,7 @@ private struct AmountInputView: View {
   let label: String?
   let placeholder: String
   let currency: String
-  let actionValue: AnyCodable?
+  let action: Action?
   let context: RenderContext
 
   @State private var text: String = ""
@@ -72,7 +80,11 @@ private struct AmountInputView: View {
         }
         .font(context.bodyFont)
         .foregroundStyle(context.textPrimary)
-        .onSubmit { context.handleAction(actionValue) }
+        .onSubmit {
+          if let action {
+            context.handle(action)
+          }
+        }
       }
       .padding(context.spacingSM)
       .background(context.surfaceColor)
