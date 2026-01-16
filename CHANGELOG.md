@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Introduced typed enums and props decoding for all built-in components.
+
+### Migration
+- Replace direct string comparisons to `ComponentNode.type` with enum cases (e.g., `.text`) or use `node.typeName` for raw strings.
+- Update custom `ComponentBuilder` registries to rely on `ComponentType` (automatic via `componentType`), and ensure any manual lookups use `ComponentType(rawValue:)` or `node.typeName`.
+- When reading props, prefer `node.enumValue(_, default:)` for enum-backed values and `node.decodeProps(...)` for strongly typed models.
+- If you used action dictionaries directly, consider decoding to `Action` (via `Action.from`) to align with new typed component props.
+
 ## [0.1.0] - 2025-01-15
 
 ### Added
