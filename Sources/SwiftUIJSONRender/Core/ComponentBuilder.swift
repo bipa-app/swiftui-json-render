@@ -32,6 +32,9 @@ public protocol ComponentBuilder {
   /// This must match the `type` field in the JSON component node.
   static var typeName: String { get }
 
+  /// The strongly typed component identifier.
+  static var componentType: ComponentType { get }
+
   /// Builds a SwiftUI view from the component node.
   /// - Parameters:
   ///   - node: The component node containing type, props, and children.
@@ -42,12 +45,19 @@ public protocol ComponentBuilder {
 }
 
 /// A type-erased wrapper for component builders.
+public extension ComponentBuilder {
+  static var componentType: ComponentType {
+    ComponentType(rawValue: typeName)
+  }
+}
+
 public struct AnyComponentBuilder: @unchecked Sendable {
-  public let typeName: String
+  public let type: ComponentType
+  public var typeName: String { type.rawValue }
   private let _build: @MainActor (ComponentNode, RenderContext) -> AnyView
 
   public init<T: ComponentBuilder>(_ builderType: T.Type) {
-    self.typeName = T.typeName
+    self.type = T.componentType
     self._build = { node, context in
       T.build(node: node, context: context)
     }

@@ -16,7 +16,7 @@ struct StreamingJSONRendererTests {
     #expect(renderer.isLoading == true)
 
     renderer.append("}")
-    #expect(renderer.node?.type == "Text")
+    #expect(renderer.node?.type == .text)
     #expect(renderer.isLoading == true)
 
     renderer.complete()
@@ -27,7 +27,7 @@ struct StreamingJSONRendererTests {
   func testReset() {
     let renderer = StreamingJSONRenderer()
     renderer.append("{\"type\":\"Text\"}")
-    #expect(renderer.node?.type == "Text")
+    #expect(renderer.node?.type == .text)
 
     renderer.reset()
     #expect(renderer.node == nil)

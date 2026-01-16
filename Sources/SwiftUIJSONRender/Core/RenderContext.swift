@@ -47,7 +47,7 @@ public struct RenderContext {
   @MainActor
   public func render(_ node: ComponentNode) -> AnyView {
     guard let builder = registry.builder(for: node.type) else {
-      return renderUnknownComponent(typeName: node.type)
+      return renderUnknownComponent(typeName: node.type.rawValue)
     }
     return builder.build(node: node, context: self)
   }

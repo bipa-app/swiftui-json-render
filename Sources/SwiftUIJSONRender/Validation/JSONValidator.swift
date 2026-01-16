@@ -80,7 +80,7 @@ public enum JSONValidator {
 
     // Check component type
     if !registry.hasBuilder(for: node.type) {
-      errors.append(.unknownComponent(node.type))
+      errors.append(.unknownComponent(node.type.rawValue))
     }
 
     // Validate children recursively

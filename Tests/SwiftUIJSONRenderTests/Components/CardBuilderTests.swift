@@ -286,7 +286,7 @@ struct CardBuilderTests {
     let view = CardBuilder.build(node: node, context: context)
 
     #expect(node.children?.count == 1)
-    #expect(node.children?[0].type == "Stack")
+    #expect(node.children?[0].type == .stack)
     #expect(view != nil)
   }
 
@@ -375,7 +375,7 @@ struct CardBuilderTests {
     let view = CardBuilder.build(node: node, context: context)
 
     #expect(node.children?.count == 2)
-    #expect(node.children?[1].type == "Button")
+    #expect(node.children?[1].type == .button)
     #expect(view != nil)
   }
 }

@@ -65,7 +65,7 @@ private struct StreamingRendererView: View {
           .transition(.opacity)
       }
     }
-    .animation(.easeInOut(duration: animationDuration), value: renderer.node?.type ?? "")
+    .animation(.easeInOut(duration: animationDuration), value: renderer.node?.type.rawValue ?? "")
     .animation(.easeInOut(duration: animationDuration), value: renderer.isLoading)
   }
 }
