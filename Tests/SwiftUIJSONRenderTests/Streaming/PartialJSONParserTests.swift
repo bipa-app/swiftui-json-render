@@ -12,7 +12,7 @@ struct PartialJSONParserTests {
 
     parser.append("}")
     let node = parser.latestComponentNode()
-    #expect(node?.type == "Text")
+    #expect(node?.type == .text)
   }
 
   @Test("Ignores braces inside strings")
@@ -29,7 +29,7 @@ struct PartialJSONParserTests {
     parser.append("{\"type\":\"Text\"}")
     parser.append("{\"type\":\"Stack\"}")
     let node = parser.latestComponentNode()
-    #expect(node?.type == "Stack")
+    #expect(node?.type == .stack)
   }
 
   @Test("Returns raw JSON string for latest object")

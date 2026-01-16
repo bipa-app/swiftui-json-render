@@ -25,14 +25,21 @@ import SwiftUI
 /// - `title`: Optional title
 /// - `points`: Array of points with x (string) and y (number)
 /// - `color`: Line color
+private struct LineChartProps: Decodable {
+  let title: String?
+  let color: String?
+  let points: [LinePoint]
+}
+
 public struct LineChartBuilder: ComponentBuilder {
   public static var typeName: String { "LineChart" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let title = node.string("title")
+    let props = node.decodeProps(LineChartProps.self)
+    let title = props?.title ?? node.string("title")
     let color = ColorParser.parse(
-      node.string("color"), default: context.primaryColor, context: context)
-    let points = parsePoints(node.array("points"))
+      props?.color ?? node.string("color"), default: context.primaryColor, context: context)
+    let points = props?.points ?? parsePoints(node.array("points"))
 
     return AnyView(
       VStack(alignment: .leading, spacing: context.spacingSM) {
@@ -78,14 +85,34 @@ public struct LineChartBuilder: ComponentBuilder {
   }
 }
 
-private struct LinePoint: Identifiable {
+private struct LinePoint: Identifiable, Decodable {
   let id = UUID()
   let x: String
   let y: Double
 
+  private enum CodingKeys: String, CodingKey {
+    case x
+    case y
+  }
+
+  init(x: String, y: Double) {
+    self.x = x
+    self.y = y
+  }
+
   init?(dict: [String: Any]) {
     self.x = dict["x"] as? String ?? ""
     self.y = dict["y"] as? Double ?? Double(dict["y"] as? Int ?? 0)
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    x = try container.decodeIfPresent(String.self, forKey: .x) ?? ""
+    if let value = try container.decodeIfPresent(Double.self, forKey: .y) {
+      y = value
+    } else {
+      y = Double(try container.decodeIfPresent(Int.self, forKey: .y) ?? 0)
+    }
   }
 }
 

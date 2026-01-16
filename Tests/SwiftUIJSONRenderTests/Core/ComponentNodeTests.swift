@@ -17,7 +17,7 @@ struct ComponentNodeTests {
     let node = ComponentNode.from(json: json)
 
     #expect(node != nil)
-    #expect(node?.type == "Text")
+    #expect(node?.type == .text)
     #expect(node?.string("content") == "Hello")
     #expect(node?.children == nil)
   }
@@ -38,9 +38,9 @@ struct ComponentNodeTests {
     let node = ComponentNode.from(json: json)
 
     #expect(node != nil)
-    #expect(node?.type == "Stack")
+    #expect(node?.type == .stack)
     #expect(node?.children?.count == 2)
-    #expect(node?.children?[0].type == "Text")
+    #expect(node?.children?[0].type == .text)
     #expect(node?.children?[0].string("content") == "Line 1")
     #expect(node?.children?[1].string("content") == "Line 2")
   }
@@ -54,7 +54,7 @@ struct ComponentNodeTests {
     let node = ComponentNode.from(json: json)
 
     #expect(node != nil)
-    #expect(node?.type == "Stack")
+    #expect(node?.type == .stack)
     #expect(node?.children != nil)
     #expect(node?.children?.isEmpty == true)
   }
@@ -90,7 +90,7 @@ struct ComponentNodeTests {
     let node = ComponentNode.from(data: data)
 
     #expect(node != nil)
-    #expect(node?.type == "Button")
+    #expect(node?.type == .button)
     #expect(node?.string("label") == "Click")
   }
 
@@ -249,10 +249,10 @@ struct ComponentNodeTests {
     let node = ComponentNode.from(json: json)
 
     #expect(node != nil)
-    #expect(node?.type == "Stack")
-    #expect(node?.children?[0].type == "Card")
+    #expect(node?.type == .stack)
+    #expect(node?.children?[0].type == .card)
     #expect(node?.children?[0].string("title") == "Nested")
-    #expect(node?.children?[0].children?[0].type == "Text")
+    #expect(node?.children?[0].children?[0].type == .text)
     #expect(node?.children?[0].children?[0].string("content") == "Deep")
   }
 
@@ -300,7 +300,7 @@ struct ComponentNodeTests {
     #expect(node != nil)
     #expect(node?.schemaVersion != nil)
     #expect(node?.schemaVersion == SchemaVersion(1, 0, 0))
-    #expect(node?.type == "Text")
+    #expect(node?.type == .text)
   }
 
   @Test("Parse JSON without schema version")
@@ -313,7 +313,7 @@ struct ComponentNodeTests {
 
     #expect(node != nil)
     #expect(node?.schemaVersion == nil)
-    #expect(node?.type == "Text")
+    #expect(node?.type == .text)
   }
 
   @Test("Parse JSON with minor version only")

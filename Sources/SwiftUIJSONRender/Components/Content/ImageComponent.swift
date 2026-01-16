@@ -1,6 +1,11 @@
 import SwiftUI
 
 /// Renders an Image component.
+
+public enum ImageContentMode: String, Sendable, Codable, CaseIterable {
+  case fit
+  case fill
+}
 ///
 /// ## JSON Example
 /// ```json
@@ -21,15 +26,26 @@ import SwiftUI
 /// - `contentMode`: "fit" (default) or "fill"
 /// - `width`: Optional width
 /// - `height`: Optional height
+private struct ImageProps: Decodable {
+  let url: String?
+  let name: String?
+  let contentMode: ImageContentMode?
+  let width: Double?
+  let height: Double?
+}
+
 public struct ImageBuilder: ComponentBuilder {
   public static var typeName: String { "Image" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let urlString = node.string("url")
-    let name = node.string("name")
-    let contentMode = parseContentMode(node.string("contentMode"))
-    let width = node.double("width").map { CGFloat($0) }
-    let height = node.double("height").map { CGFloat($0) }
+    let props = node.decodeProps(ImageProps.self)
+    let urlString = props?.url ?? node.string("url")
+    let name = props?.name ?? node.string("name")
+    let contentModeValue = props?.contentMode
+      ?? node.enumValue("contentMode", default: ImageContentMode.fit)
+    let contentMode = parseContentMode(contentModeValue)
+    let width = (props?.width ?? node.double("width")).map { CGFloat($0) }
+    let height = (props?.height ?? node.double("height")).map { CGFloat($0) }
 
     if let urlString = urlString, let url = URL(string: urlString) {
       let placeholderOpacity = context.placeholderOpacity
@@ -67,11 +83,11 @@ public struct ImageBuilder: ComponentBuilder {
     return AnyView(EmptyView())
   }
 
-  private static func parseContentMode(_ value: String?) -> ContentMode {
-    switch value?.lowercased() {
-    case "fill":
+  private static func parseContentMode(_ value: ImageContentMode) -> ContentMode {
+    switch value {
+    case .fill:
       return .fill
-    default:
+    case .fit:
       return .fit
     }
   }

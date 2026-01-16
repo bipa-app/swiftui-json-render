@@ -16,12 +16,18 @@ import SwiftUI
 /// ## Props
 /// - `text`: The heading text (required)
 /// - `level`: Heading level 1-3 (default: 1)
+private struct HeadingProps: Decodable {
+  let text: String?
+  let level: Int?
+}
+
 public struct HeadingBuilder: ComponentBuilder {
   public static var typeName: String { "Heading" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let text = node.string("text") ?? ""
-    let level = node.int("level") ?? 1
+    let props = node.decodeProps(HeadingProps.self)
+    let text = props?.text ?? node.string("text") ?? ""
+    let level = props?.level ?? node.int("level") ?? 1
 
     let font = headingFont(for: level, context: context)
 

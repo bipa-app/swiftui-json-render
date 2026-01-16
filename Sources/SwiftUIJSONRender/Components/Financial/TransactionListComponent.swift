@@ -16,12 +16,16 @@ import SwiftUI
 ///
 /// ## Props
 /// - `transactions`: Array of transaction objects
+private struct TransactionListProps: Decodable {
+  let transactions: [TransactionItem]
+}
+
 public struct TransactionListBuilder: ComponentBuilder {
   public static var typeName: String { "TransactionList" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let transactions = parseTransactions(
-      node.dictionary("transactions"), node.array("transactions"))
+    let props = node.decodeProps(TransactionListProps.self)
+    let transactions = props?.transactions ?? parseTransactions(node.array("transactions"))
 
     return AnyView(
       VStack(alignment: .leading, spacing: 0) {
@@ -35,10 +39,7 @@ public struct TransactionListBuilder: ComponentBuilder {
     )
   }
 
-  private static func parseTransactions(
-    _ dict: [String: Any]?,
-    _ array: [Any]?
-  ) -> [TransactionItem] {
+  private static func parseTransactions(_ array: [Any]?) -> [TransactionItem] {
     guard let array = array else { return [] }
     return array.compactMap { item in
       guard let dict = item as? [String: Any] else { return nil }
@@ -47,12 +48,28 @@ public struct TransactionListBuilder: ComponentBuilder {
   }
 }
 
-private struct TransactionItem {
+private struct TransactionItem: Decodable {
   let description: String
   let amount: Int
   let date: String
   let category: String?
   let icon: String?
+
+  private enum CodingKeys: String, CodingKey {
+    case description
+    case amount
+    case date
+    case category
+    case icon
+  }
+
+  init(description: String, amount: Int, date: String, category: String?, icon: String?) {
+    self.description = description
+    self.amount = amount
+    self.date = date
+    self.category = category
+    self.icon = icon
+  }
 
   init?(dict: [String: Any]) {
     self.description = dict["description"] as? String ?? "Transaction"
@@ -60,6 +77,15 @@ private struct TransactionItem {
     self.date = dict["date"] as? String ?? ""
     self.category = dict["category"] as? String
     self.icon = dict["icon"] as? String
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    description = try container.decodeIfPresent(String.self, forKey: .description) ?? "Transaction"
+    amount = try container.decodeIfPresent(Int.self, forKey: .amount) ?? 0
+    date = try container.decodeIfPresent(String.self, forKey: .date) ?? ""
+    category = try container.decodeIfPresent(String.self, forKey: .category)
+    icon = try container.decodeIfPresent(String.self, forKey: .icon)
   }
 }
 

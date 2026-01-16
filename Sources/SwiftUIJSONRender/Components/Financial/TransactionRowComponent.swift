@@ -24,15 +24,25 @@ import SwiftUI
 /// - `date`: ISO date string
 /// - `category`: Optional category
 /// - `icon`: Optional SF Symbol name
+private struct TransactionRowProps: Decodable {
+  let description: String?
+  let amount: Int?
+  let date: String?
+  let category: String?
+  let icon: String?
+}
+
 public struct TransactionRowBuilder: ComponentBuilder {
   public static var typeName: String { "TransactionRow" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let description = node.string("description") ?? context.defaultTransactionDescription
-    let amount = node.int("amount") ?? 0
-    let date = node.string("date") ?? ""
-    let category = node.string("category")
-    let icon = node.string("icon")
+    let props = node.decodeProps(TransactionRowProps.self)
+    let description = props?.description
+      ?? node.string("description") ?? context.defaultTransactionDescription
+    let amount = props?.amount ?? node.int("amount") ?? 0
+    let date = props?.date ?? node.string("date") ?? ""
+    let category = props?.category ?? node.string("category")
+    let icon = props?.icon ?? node.string("icon")
 
     return AnyView(
       HStack(spacing: context.spacingSM) {

@@ -19,13 +19,21 @@ import SwiftUI
 /// - `title`: Optional title string displayed at the top
 /// - `padding`: Padding inside the card (default: 16)
 /// - `cornerRadius`: Corner radius (default: 12)
+private struct CardProps: Decodable {
+  let title: String?
+  let padding: Double?
+  let cornerRadius: Double?
+}
+
 public struct CardBuilder: ComponentBuilder {
   public static var typeName: String { "Card" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let title = node.string("title")
-    let padding = CGFloat(node.double("padding") ?? Double(context.spacingMD))
-    let cornerRadius = CGFloat(node.double("cornerRadius") ?? Double(context.radiusMD))
+    let props = node.decodeProps(CardProps.self)
+    let title = props?.title ?? node.string("title")
+    let padding = CGFloat(props?.padding ?? node.double("padding") ?? Double(context.spacingMD))
+    let cornerRadius = CGFloat(
+      props?.cornerRadius ?? node.double("cornerRadius") ?? Double(context.radiusMD))
 
     let children = context.renderChildren(node.children)
 

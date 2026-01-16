@@ -24,13 +24,21 @@ import SwiftUI
 /// - `title`: Optional title
 /// - `segments`: Array of segments with label, value, color
 /// - `showLegend`: Show legend list (default: true)
+private struct PieChartProps: Decodable {
+  let title: String?
+  let segments: [PieSegmentData]
+  let showLegend: Bool?
+}
+
 public struct PieChartBuilder: ComponentBuilder {
   public static var typeName: String { "PieChart" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let title = node.string("title")
-    let showLegend = node.bool("showLegend") ?? true
-    let segments = parseSegments(node.array("segments"), context: context)
+    let props = node.decodeProps(PieChartProps.self)
+    let title = props?.title ?? node.string("title")
+    let showLegend = props?.showLegend ?? node.bool("showLegend") ?? true
+    let segments = props?.segments.map { PieSegment(data: $0, context: context) }
+      ?? parseSegments(node.array("segments"), context: context)
 
     return AnyView(
       VStack(alignment: .leading, spacing: context.spacingSM) {
@@ -90,17 +98,58 @@ public struct PieChartBuilder: ComponentBuilder {
   }
 }
 
+private struct PieSegmentData: Decodable {
+  let label: String
+  let value: Double
+  let color: String?
+
+  private enum CodingKeys: String, CodingKey {
+    case label
+    case value
+    case color
+  }
+
+  init(label: String, value: Double, color: String?) {
+    self.label = label
+    self.value = value
+    self.color = color
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    label = try container.decodeIfPresent(String.self, forKey: .label) ?? ""
+    if let value = try container.decodeIfPresent(Double.self, forKey: .value) {
+      self.value = value
+    } else {
+      self.value = Double(try container.decodeIfPresent(Int.self, forKey: .value) ?? 0)
+    }
+    color = try container.decodeIfPresent(String.self, forKey: .color)
+  }
+}
+
 private struct PieSegment: Identifiable {
   let id = UUID()
   let label: String
   let value: Double
   let color: Color
 
+  init(label: String, value: Double, color: Color) {
+    self.label = label
+    self.value = value
+    self.color = color
+  }
+
   init?(dict: [String: Any], context: RenderContext) {
     self.label = dict["label"] as? String ?? ""
     self.value = dict["value"] as? Double ?? Double(dict["value"] as? Int ?? 0)
     let colorString = dict["color"] as? String
     self.color = ColorParser.parse(colorString, default: context.primaryColor, context: context)
+  }
+
+  init(data: PieSegmentData, context: RenderContext) {
+    label = data.label
+    value = data.value
+    color = ColorParser.parse(data.color, default: context.primaryColor, context: context)
   }
 }
 

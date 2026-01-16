@@ -14,11 +14,16 @@ import SwiftUI
 ///
 /// ## Props
 /// - `size`: Optional minimum spacing length
+private struct SpacerProps: Decodable {
+  let size: Double?
+}
+
 public struct SpacerBuilder: ComponentBuilder {
   public static var typeName: String { "Spacer" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let size = node.double("size").map { CGFloat($0) }
+    let props = node.decodeProps(SpacerProps.self)
+    let size = (props?.size ?? node.double("size")).map { CGFloat($0) }
     let spacer = Spacer(minLength: size)
     return AnyView(spacer)
   }

@@ -128,10 +128,16 @@ extension ComponentSchema {
       children: true,
       props: [
         ComponentPropSchema(
-          name: "direction", type: "string", enumValues: ["vertical", "horizontal"]),
+          name: "direction",
+          type: "string",
+          enumValues: StackDirection.allCases.map(\.rawValue)
+        ),
         ComponentPropSchema(name: "spacing", type: "number"),
         ComponentPropSchema(
-          name: "alignment", type: "string", enumValues: ["leading", "center", "trailing"]),
+          name: "alignment",
+          type: "string",
+          enumValues: StackAlignment.allCases.map(\.rawValue)
+        ),
       ]
     ),
     ComponentSchema(
@@ -148,7 +154,10 @@ extension ComponentSchema {
       children: false,
       props: [
         ComponentPropSchema(
-          name: "orientation", type: "string", enumValues: ["horizontal", "vertical"]),
+          name: "orientation",
+          type: "string",
+          enumValues: DividerOrientation.allCases.map(\.rawValue)
+        ),
         ComponentPropSchema(name: "thickness", type: "number"),
         ComponentPropSchema(name: "color", type: "string"),
         ComponentPropSchema(name: "padding", type: "number"),
@@ -170,14 +179,12 @@ extension ComponentSchema {
         ComponentPropSchema(
           name: "style",
           type: "string",
-          enumValues: [
-            "body", "caption", "footnote", "headline", "title", "largeTitle", "subheadline",
-          ]
+          enumValues: TextStyle.allCases.map(\.rawValue)
         ),
         ComponentPropSchema(
           name: "weight",
           type: "string",
-          enumValues: ["regular", "medium", "semibold", "bold", "heavy", "light", "thin"]
+          enumValues: TextWeight.allCases.map(\.rawValue)
         ),
         ComponentPropSchema(name: "color", type: "string"),
       ]
@@ -196,7 +203,11 @@ extension ComponentSchema {
       props: [
         ComponentPropSchema(name: "url", type: "string"),
         ComponentPropSchema(name: "name", type: "string"),
-        ComponentPropSchema(name: "contentMode", type: "string", enumValues: ["fit", "fill"]),
+        ComponentPropSchema(
+          name: "contentMode",
+          type: "string",
+          enumValues: ImageContentMode.allCases.map(\.rawValue)
+        ),
         ComponentPropSchema(name: "width", type: "number"),
         ComponentPropSchema(name: "height", type: "number"),
       ]
@@ -309,7 +320,10 @@ extension ComponentSchema {
       props: [
         ComponentPropSchema(name: "label", type: "string", required: true),
         ComponentPropSchema(
-          name: "style", type: "string", enumValues: ["primary", "secondary", "destructive"]),
+          name: "style",
+          type: "string",
+          enumValues: ButtonStyle.allCases.map(\.rawValue)
+        ),
         ComponentPropSchema(name: "icon", type: "string"),
         ComponentPropSchema(name: "disabled", type: "boolean"),
         ComponentPropSchema(name: "action", type: "object"),
@@ -371,7 +385,10 @@ extension ComponentSchema {
         ComponentPropSchema(name: "title", type: "string"),
         ComponentPropSchema(name: "message", type: "string"),
         ComponentPropSchema(
-          name: "severity", type: "string", enumValues: ["info", "success", "warning", "error"]),
+          name: "severity",
+          type: "string",
+          enumValues: AlertSeverity.allCases.map(\.rawValue)
+        ),
         ComponentPropSchema(name: "dismissible", type: "boolean"),
         ComponentPropSchema(
           name: "action",

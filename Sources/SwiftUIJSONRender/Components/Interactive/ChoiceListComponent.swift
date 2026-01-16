@@ -20,13 +20,20 @@ import SwiftUI
 /// - `question`: Prompt text
 /// - `options`: Array of options (id, label, description)
 /// - `action`: Action with `name` and `paramKey`
+private struct ChoiceListProps: Decodable {
+  let question: String?
+  let options: [ChoiceOption]
+  let action: ChoiceActionConfig?
+}
+
 public struct ChoiceListBuilder: ComponentBuilder {
   public static var typeName: String { "ChoiceList" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let question = node.string("question") ?? context.chooseOptionPrompt
-    let options = parseOptions(node.array("options"))
-    let actionConfig = parseActionConfig(node.dictionary("action"))
+    let props = node.decodeProps(ChoiceListProps.self)
+    let question = props?.question ?? node.string("question") ?? context.chooseOptionPrompt
+    let options = props?.options ?? parseOptions(node.array("options"))
+    let actionConfig = props?.action ?? parseActionConfig(node.dictionary("action"))
 
     return AnyView(
       ChoiceListView(
@@ -53,7 +60,7 @@ public struct ChoiceListBuilder: ComponentBuilder {
   }
 }
 
-private struct ChoiceOption: Identifiable {
+private struct ChoiceOption: Identifiable, Decodable {
   let id: String
   let label: String
   let description: String?
@@ -68,9 +75,25 @@ private struct ChoiceOption: Identifiable {
   }
 }
 
-private struct ChoiceActionConfig {
+private struct ChoiceActionConfig: Decodable {
   let name: String
   let paramKey: String
+
+  private enum CodingKeys: String, CodingKey {
+    case name
+    case paramKey
+  }
+
+  init(name: String, paramKey: String) {
+    self.name = name
+    self.paramKey = paramKey
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    name = try container.decode(String.self, forKey: .name)
+    paramKey = try container.decodeIfPresent(String.self, forKey: .paramKey) ?? "id"
+  }
 }
 
 private struct ChoiceListView: View {

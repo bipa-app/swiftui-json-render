@@ -1,6 +1,11 @@
 import SwiftUI
 
 /// Renders a Divider component.
+
+public enum DividerOrientation: String, Sendable, Codable, CaseIterable {
+  case horizontal
+  case vertical
+}
 ///
 /// ## JSON Example
 /// ```json
@@ -22,21 +27,31 @@ import SwiftUI
 /// - `color`: Hex or named color (default: theme textSecondary)
 /// - `padding`: Padding around divider (default: 0)
 /// - `length`: Optional length for divider (width for horizontal, height for vertical)
+private struct DividerProps: Decodable {
+  let orientation: DividerOrientation?
+  let thickness: Double?
+  let padding: Double?
+  let length: Double?
+  let color: String?
+}
+
 public struct DividerBuilder: ComponentBuilder {
   public static var typeName: String { "Divider" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let orientation = node.string("orientation", default: "horizontal").lowercased()
-    let thickness = CGFloat(node.double("thickness") ?? 1)
-    let padding = CGFloat(node.double("padding") ?? 0)
-    let length = node.double("length")
+    let props = node.decodeProps(DividerProps.self)
+    let orientation = props?.orientation
+      ?? node.enumValue("orientation", default: DividerOrientation.horizontal)
+    let thickness = CGFloat(props?.thickness ?? node.double("thickness") ?? 1)
+    let padding = CGFloat(props?.padding ?? node.double("padding") ?? 0)
+    let length = props?.length ?? node.double("length")
     let color = ColorParser.parse(
-      node.string("color"), default: context.textSecondary, context: context)
+      props?.color ?? node.string("color"), default: context.textSecondary, context: context)
 
     let base = Rectangle().fill(color)
 
     let divider: AnyView
-    if orientation == "vertical" {
+    if orientation == .vertical {
       divider = AnyView(
         base
           .frame(width: thickness, height: length.map { CGFloat($0) })
