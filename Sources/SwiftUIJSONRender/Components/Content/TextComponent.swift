@@ -1,6 +1,26 @@
 import SwiftUI
 
 /// Renders a Text component.
+
+public enum TextStyle: String, Sendable, Codable {
+  case body
+  case caption
+  case footnote
+  case headline
+  case title
+  case largeTitle
+  case subheadline
+}
+
+public enum TextWeight: String, Sendable, Codable {
+  case regular
+  case medium
+  case semibold
+  case bold
+  case heavy
+  case light
+  case thin
+}
 ///
 /// ## JSON Example
 /// ```json
@@ -25,8 +45,8 @@ public struct TextBuilder: ComponentBuilder {
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
     let content = node.string("content") ?? ""
-    let style = node.string("style", default: "body")
-    let weight = node.string("weight", default: "regular")
+    let style = node.enumValue("style", default: TextStyle.body)
+    let weight = node.enumValue("weight", default: TextWeight.regular)
     let colorString = node.string("color")
 
     let font = parseFont(style: style, context: context)
@@ -41,40 +61,40 @@ public struct TextBuilder: ComponentBuilder {
     )
   }
 
-  private static func parseFont(style: String, context: RenderContext) -> Font {
-    switch style.lowercased() {
-    case "caption":
+  private static func parseFont(style: TextStyle, context: RenderContext) -> Font {
+    switch style {
+    case .caption:
       return context.captionFont
-    case "footnote":
+    case .footnote:
       return .footnote
-    case "headline":
+    case .headline:
       return context.headingFont
-    case "title":
+    case .title:
       return .title
-    case "largetitle":
+    case .largeTitle:
       return .largeTitle
-    case "subheadline":
+    case .subheadline:
       return .subheadline
-    default:
+    case .body:
       return context.bodyFont
     }
   }
 
-  private static func parseFontWeight(_ weight: String) -> Font.Weight {
-    switch weight.lowercased() {
-    case "medium":
+  private static func parseFontWeight(_ weight: TextWeight) -> Font.Weight {
+    switch weight {
+    case .medium:
       return .medium
-    case "semibold":
+    case .semibold:
       return .semibold
-    case "bold":
+    case .bold:
       return .bold
-    case "heavy":
+    case .heavy:
       return .heavy
-    case "light":
+    case .light:
       return .light
-    case "thin":
+    case .thin:
       return .thin
-    default:
+    case .regular:
       return .regular
     }
   }

@@ -1,6 +1,17 @@
 import SwiftUI
 
 /// Renders a Stack component (VStack or HStack).
+
+public enum StackDirection: String, Sendable, Codable {
+  case vertical
+  case horizontal
+}
+
+public enum StackAlignment: String, Sendable, Codable {
+  case leading
+  case center
+  case trailing
+}
 ///
 /// ## JSON Example
 /// ```json
@@ -23,13 +34,13 @@ public struct StackBuilder: ComponentBuilder {
   public static var typeName: String { "Stack" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let direction = node.string("direction", default: "vertical")
+    let direction = node.enumValue("direction", default: StackDirection.vertical)
     let spacing = CGFloat(node.double("spacing") ?? Double(context.spacingSM))
-    let alignment = parseAlignment(node.string("alignment"))
+    let alignment = parseAlignment(node.enumValue("alignment", default: StackAlignment.center))
 
     let children = context.renderChildren(node.children)
 
-    if direction == "horizontal" {
+    if direction == .horizontal {
       return AnyView(
         HStack(alignment: alignment.vertical, spacing: spacing) {
           ForEach(Array(children.enumerated()), id: \.offset) { _, child in
@@ -48,17 +59,15 @@ public struct StackBuilder: ComponentBuilder {
     }
   }
 
-  private static func parseAlignment(_ value: String?) -> (
+  private static func parseAlignment(_ value: StackAlignment) -> (
     horizontal: HorizontalAlignment, vertical: VerticalAlignment
   ) {
-    switch value?.lowercased() {
-    case "leading":
+    switch value {
+    case .leading:
       return (.leading, .top)
-    case "trailing":
+    case .trailing:
       return (.trailing, .bottom)
-    case "center":
-      return (.center, .center)
-    default:
+    case .center:
       return (.center, .center)
     }
   }

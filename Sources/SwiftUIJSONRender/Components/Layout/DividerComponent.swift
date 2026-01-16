@@ -1,6 +1,11 @@
 import SwiftUI
 
 /// Renders a Divider component.
+
+public enum DividerOrientation: String, Sendable, Codable {
+  case horizontal
+  case vertical
+}
 ///
 /// ## JSON Example
 /// ```json
@@ -26,7 +31,7 @@ public struct DividerBuilder: ComponentBuilder {
   public static var typeName: String { "Divider" }
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
-    let orientation = node.string("orientation", default: "horizontal").lowercased()
+    let orientation = node.enumValue("orientation", default: DividerOrientation.horizontal)
     let thickness = CGFloat(node.double("thickness") ?? 1)
     let padding = CGFloat(node.double("padding") ?? 0)
     let length = node.double("length")
@@ -36,7 +41,7 @@ public struct DividerBuilder: ComponentBuilder {
     let base = Rectangle().fill(color)
 
     let divider: AnyView
-    if orientation == "vertical" {
+    if orientation == .vertical {
       divider = AnyView(
         base
           .frame(width: thickness, height: length.map { CGFloat($0) })

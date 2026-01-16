@@ -1,6 +1,13 @@
 import SwiftUI
 
 /// Renders an Alert/Banner component.
+
+public enum AlertSeverity: String, Sendable, Codable {
+  case info
+  case success
+  case warning
+  case error
+}
 ///
 /// ## JSON Example
 /// ```json
@@ -31,7 +38,7 @@ public struct AlertBuilder: ComponentBuilder {
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
     let title = node.string("title") ?? context.defaultAlertTitle
     let message = node.string("message")
-    let severity = node.string("severity", default: "info")
+    let severity = node.enumValue("severity", default: AlertSeverity.info)
     let dismissible = node.bool("dismissible") ?? false
     let actionValue = node.props?["action"]
 
@@ -53,7 +60,7 @@ public struct AlertBuilder: ComponentBuilder {
 private struct AlertView: View {
   let title: String
   let message: String?
-  let severity: String
+  let severity: AlertSeverity
   let dismissible: Bool
   let actionValue: AnyCodable?
   let context: RenderContext
@@ -119,27 +126,27 @@ private struct AlertView: View {
   }
 
   private var severityColor: Color {
-    switch severity.lowercased() {
-    case "success":
+    switch severity {
+    case .success:
       return context.successColor
-    case "warning":
+    case .warning:
       return context.warningColor
-    case "error":
+    case .error:
       return context.errorColor
-    default:
+    case .info:
       return context.primaryColor
     }
   }
 
   private var iconName: String {
-    switch severity.lowercased() {
-    case "success":
+    switch severity {
+    case .success:
       return "checkmark.circle.fill"
-    case "warning":
+    case .warning:
       return "exclamationmark.triangle.fill"
-    case "error":
+    case .error:
       return "xmark.circle.fill"
-    default:
+    case .info:
       return "info.circle.fill"
     }
   }

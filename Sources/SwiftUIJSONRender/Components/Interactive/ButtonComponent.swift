@@ -1,6 +1,12 @@
 import SwiftUI
 
 /// Renders a Button component.
+
+public enum ButtonStyle: String, Sendable, Codable {
+  case primary
+  case secondary
+  case destructive
+}
 ///
 /// ## JSON Example
 /// ```json
@@ -30,7 +36,7 @@ public struct ButtonBuilder: ComponentBuilder {
 
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
     let label = node.string("label") ?? context.defaultButtonLabel
-    let style = node.string("style", default: "primary")
+    let style = node.enumValue("style", default: ButtonStyle.primary)
     let icon = node.string("icon")
     let disabled = node.bool("disabled") ?? false
     let actionValue = node.props?["action"]
@@ -52,7 +58,7 @@ public struct ButtonBuilder: ComponentBuilder {
 
 private struct ButtonView: View {
   let label: String
-  let style: String
+  let style: ButtonStyle
   let icon: String?
   let disabled: Bool
   let actionValue: AnyCodable?
@@ -68,7 +74,7 @@ private struct ButtonView: View {
       }
       .padding(.horizontal, context.spacingMD)
       .padding(.vertical, context.spacingSM)
-      .frame(maxWidth: style == "primary" ? .infinity : nil)
+      .frame(maxWidth: style == .primary ? .infinity : nil)
       .background(backgroundColor)
       .foregroundStyle(foregroundColor)
       .clipShape(.rect(cornerRadius: context.radiusSM))
@@ -78,28 +84,24 @@ private struct ButtonView: View {
   }
 
   private var backgroundColor: Color {
-    switch style.lowercased() {
-    case "primary":
+    switch style {
+    case .primary:
       return context.primaryColor
-    case "secondary":
+    case .secondary:
       return context.surfaceColor
-    case "destructive":
+    case .destructive:
       return context.errorColor
-    default:
-      return context.primaryColor
     }
   }
 
   private var foregroundColor: Color {
-    switch style.lowercased() {
-    case "primary":
+    switch style {
+    case .primary:
       return context.buttonPrimaryForeground
-    case "destructive":
+    case .destructive:
       return context.buttonDestructiveForeground
-    case "secondary":
+    case .secondary:
       return context.textPrimary
-    default:
-      return context.buttonPrimaryForeground
     }
   }
 

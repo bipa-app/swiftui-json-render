@@ -1,6 +1,11 @@
 import SwiftUI
 
 /// Renders an Image component.
+
+public enum ImageContentMode: String, Sendable, Codable {
+  case fit
+  case fill
+}
 ///
 /// ## JSON Example
 /// ```json
@@ -27,7 +32,7 @@ public struct ImageBuilder: ComponentBuilder {
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
     let urlString = node.string("url")
     let name = node.string("name")
-    let contentMode = parseContentMode(node.string("contentMode"))
+    let contentMode = parseContentMode(node.enumValue("contentMode", default: ImageContentMode.fit))
     let width = node.double("width").map { CGFloat($0) }
     let height = node.double("height").map { CGFloat($0) }
 
@@ -67,11 +72,11 @@ public struct ImageBuilder: ComponentBuilder {
     return AnyView(EmptyView())
   }
 
-  private static func parseContentMode(_ value: String?) -> ContentMode {
-    switch value?.lowercased() {
-    case "fill":
+  private static func parseContentMode(_ value: ImageContentMode) -> ContentMode {
+    switch value {
+    case .fill:
       return .fill
-    default:
+    case .fit:
       return .fit
     }
   }
