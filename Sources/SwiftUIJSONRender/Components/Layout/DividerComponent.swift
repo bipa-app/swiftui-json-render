@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Renders a Divider component.
 
-public enum DividerOrientation: String, Sendable, Codable {
+public enum DividerOrientation: String, Sendable, Codable, CaseIterable {
   case horizontal
   case vertical
 }

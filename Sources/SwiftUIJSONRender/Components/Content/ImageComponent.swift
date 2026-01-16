@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Renders an Image component.
 
-public enum ImageContentMode: String, Sendable, Codable {
+public enum ImageContentMode: String, Sendable, Codable, CaseIterable {
   case fit
   case fill
 }

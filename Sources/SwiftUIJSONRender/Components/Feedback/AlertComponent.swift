@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Renders an Alert/Banner component.
 
-public enum AlertSeverity: String, Sendable, Codable {
+public enum AlertSeverity: String, Sendable, Codable, CaseIterable {
   case info
   case success
   case warning

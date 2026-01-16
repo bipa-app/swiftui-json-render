@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Renders a Button component.
 
-public enum ButtonStyle: String, Sendable, Codable {
+public enum ButtonStyle: String, Sendable, Codable, CaseIterable {
   case primary
   case secondary
   case destructive

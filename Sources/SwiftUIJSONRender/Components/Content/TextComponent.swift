@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Renders a Text component.
 
-public enum TextStyle: String, Sendable, Codable {
+public enum TextStyle: String, Sendable, Codable, CaseIterable {
   case body
   case caption
   case footnote
@@ -12,7 +12,7 @@ public enum TextStyle: String, Sendable, Codable {
   case subheadline
 }
 
-public enum TextWeight: String, Sendable, Codable {
+public enum TextWeight: String, Sendable, Codable, CaseIterable {
   case regular
   case medium
   case semibold

@@ -238,6 +238,20 @@ extension ComponentNode {
     return T(rawValue: value)
   }
 
+  /// Retrieves an enum-backed string property by key with case-insensitive matching.
+  /// - Parameter key: The property key.
+  /// - Returns: The enum value, or `nil` if not found or not a valid case.
+  public func enumValue<T: RawRepresentable & CaseIterable>(
+    _ key: String
+  ) -> T? where T.RawValue == String {
+    guard let value = string(key) else { return nil }
+    if let match = T(rawValue: value) {
+      return match
+    }
+    let normalizedValue = value.lowercased()
+    return T.allCases.first { $0.rawValue.lowercased() == normalizedValue }
+  }
+
   /// Retrieves an enum-backed string property with a default value.
   /// - Parameters:
   ///   - key: The property key.

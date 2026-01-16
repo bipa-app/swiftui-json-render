@@ -2,12 +2,12 @@ import SwiftUI
 
 /// Renders a Stack component (VStack or HStack).
 
-public enum StackDirection: String, Sendable, Codable {
+public enum StackDirection: String, Sendable, Codable, CaseIterable {
   case vertical
   case horizontal
 }
 
-public enum StackAlignment: String, Sendable, Codable {
+public enum StackAlignment: String, Sendable, Codable, CaseIterable {
   case leading
   case center
   case trailing
