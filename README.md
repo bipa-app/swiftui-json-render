@@ -20,6 +20,12 @@ A Swift library for rendering JSON-defined UI into native SwiftUI views. Designe
 - **Action Handling** - Capture user interactions from buttons, inputs, and choices
 - **Validation** - Validate JSON structure before rendering
 
+## Visual Examples
+
+See the screenshot gallery and instructions in `docs/examples.md`.
+
+To capture screenshots, open the previews in `Sources/SwiftUIJSONRender/PreviewSupport/ComponentPreviews.swift` and export the rendered previews from Xcode.
+
 ## Installation
 
 ### Swift Package Manager
