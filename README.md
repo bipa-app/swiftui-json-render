@@ -24,7 +24,7 @@ A Swift library for rendering JSON-defined UI into native SwiftUI views. Designe
 
 See the screenshot gallery and instructions in `docs/examples.md`.
 
-To capture screenshots, open the previews in `Sources/SwiftUIJSONRender/PreviewSupport/ComponentPreviews.swift` and export the rendered previews from Xcode.
+Generate the images automatically with `./scripts/generate-previews.sh`, or capture them manually from the previews in `Sources/SwiftUIJSONRender/PreviewSupport/ComponentPreviews.swift`.
 
 ## Installation
 

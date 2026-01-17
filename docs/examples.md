@@ -4,6 +4,22 @@ This gallery pairs the JSON examples with screenshots captured from Xcode previe
 
 ## How to Generate Screenshots (Xcode Previews)
 
+### Automated (recommended)
+
+Run the snapshot generator (macOS 13+). It renders the same JSON snippets as the previews using SwiftUI's `ImageRenderer`:
+
+```
+./scripts/generate-previews.sh
+```
+
+Use `--output` to target a custom directory:
+
+```
+./scripts/generate-previews.sh --output docs/images
+```
+
+### Manual (Xcode)
+
 1. Open the package in Xcode.
 2. Navigate to `Sources/SwiftUIJSONRender/PreviewSupport/ComponentPreviews.swift`.
 3. Open the canvas (Editor → Canvas) and wait for previews to render.

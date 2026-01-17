@@ -21,6 +21,10 @@ let package = Package(
     .target(
       name: "SwiftUIJSONRender"
     ),
+    .executableTarget(
+      name: "PreviewSnapshotGenerator",
+      dependencies: ["SwiftUIJSONRender"]
+    ),
     .testTarget(
       name: "SwiftUIJSONRenderTests",
       dependencies: [
