@@ -27,207 +27,141 @@ struct SnapshotSpec {
 
   static let all: [SnapshotSpec] = [
     .init(
-      name: "stack",
+      name: "marketing-overview",
       json: """
       {
         "type": "Stack",
-        "props": { "direction": "vertical", "spacing": 8, "alignment": "leading" },
+        "props": { "direction": "vertical", "spacing": 16, "alignment": "leading" },
         "children": [
-          { "type": "Text", "props": { "content": "Line 1" } },
-          { "type": "Text", "props": { "content": "Line 2" } }
+          { "type": "Heading", "props": { "text": "SwiftUI JSON Render", "level": 1 } },
+          { "type": "Text", "props": { "content": "Build native SwiftUI from JSON for AI and server-driven experiences." } },
+          { "type": "Image", "props": { "url": "https://example.com/hero.png", "contentMode": "fit", "width": 640, "height": 220 } },
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "spacing": 12, "alignment": "leading" },
+            "children": [
+              { "type": "Button", "props": { "label": "Get Started", "style": "primary" } },
+              { "type": "Button", "props": { "label": "Read Docs", "style": "secondary" } }
+            ]
+          },
+          {
+            "type": "Card",
+            "props": { "title": "Highlights", "padding": 16 },
+            "children": [
+              { "type": "Text", "props": { "content": "• 21 built-in components\n• Streaming JSON rendering\n• Themeable and localizable" } }
+            ]
+          }
         ]
       }
       """,
-      size: CGSize(width: 320, height: 120)
+      size: CGSize(width: 720, height: 600)
     ),
     .init(
-      name: "card",
-      json: """
-      {
-        "type": "Card",
-        "props": { "title": "Card Title", "padding": 16 },
-        "children": [
-          { "type": "Text", "props": { "content": "Card content" } }
-        ]
-      }
-      """,
-      size: CGSize(width: 320, height: 140)
-    ),
-    .init(
-      name: "divider",
-      json: """
-      { "type": "Divider", "props": { "thickness": 2, "color": "#DDDDDD" } }
-      """,
-      size: CGSize(width: 320, height: 40)
-    ),
-    .init(
-      name: "spacer",
+      name: "form-flow",
       json: """
       {
         "type": "Stack",
-        "props": { "direction": "vertical", "spacing": 8 },
+        "props": { "direction": "vertical", "spacing": 16, "alignment": "leading" },
         "children": [
-          { "type": "Text", "props": { "content": "Above" } },
-          { "type": "Spacer", "props": { "size": 24 } },
-          { "type": "Text", "props": { "content": "Below" } }
+          { "type": "Heading", "props": { "text": "Send payment", "level": 1 } },
+          { "type": "Text", "props": { "content": "Choose a recipient and confirm the amount." } },
+          {
+            "type": "Card",
+            "props": { "title": "Details", "padding": 16 },
+            "children": [
+              { "type": "AmountInput", "props": { "label": "Amount", "placeholder": "0,00", "currency": "BRL" } },
+              {
+                "type": "ChoiceList",
+                "props": {
+                  "question": "Speed",
+                  "options": [
+                    { "id": "standard", "label": "Standard", "description": "Free" },
+                    { "id": "fast", "label": "Instant", "description": "R$ 4,99" }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "Stack",
+            "props": { "direction": "horizontal", "spacing": 12, "alignment": "leading" },
+            "children": [
+              { "type": "Button", "props": { "label": "Review", "style": "primary" } },
+              { "type": "Button", "props": { "label": "Cancel", "style": "secondary" } }
+            ]
+          }
         ]
       }
       """,
-      size: CGSize(width: 320, height: 140)
+      size: CGSize(width: 720, height: 720)
     ),
     .init(
-      name: "text",
-      json: """
-      { "type": "Text", "props": { "content": "Hello, world!", "style": "headline" } }
-      """,
-      size: CGSize(width: 320, height: 80)
-    ),
-    .init(
-      name: "heading",
-      json: """
-      { "type": "Heading", "props": { "text": "Section Title", "level": 2 } }
-      """,
-      size: CGSize(width: 320, height: 80)
-    ),
-    .init(
-      name: "icon",
-      json: """
-      { "type": "Icon", "props": { "name": "star.fill", "size": 28, "color": "#FFB100" } }
-      """,
-      size: CGSize(width: 120, height: 120)
-    ),
-    .init(
-      name: "image",
-      json: """
-      { "type": "Image", "props": { "url": "https://example.com/image.png", "contentMode": "fit", "width": 200, "height": 120 } }
-      """,
-      size: CGSize(width: 240, height: 160)
-    ),
-    .init(
-      name: "button",
-      json: """
-      { "type": "Button", "props": { "label": "Continue", "style": "primary" } }
-      """,
-      size: CGSize(width: 320, height: 100)
-    ),
-    .init(
-      name: "amount-input",
-      json: """
-      { "type": "AmountInput", "props": { "label": "Amount", "placeholder": "0,00", "currency": "BRL" } }
-      """,
-      size: CGSize(width: 320, height: 120)
-    ),
-    .init(
-      name: "confirm-dialog",
+      name: "alerts-choices",
       json: """
       {
-        "type": "ConfirmDialog",
-        "props": {
-          "title": "Confirm",
-          "message": "Proceed?",
-          "confirmLabel": "Yes",
-          "cancelLabel": "No",
-          "triggerLabel": "Open"
-        }
+        "type": "Stack",
+        "props": { "direction": "vertical", "spacing": 16, "alignment": "leading" },
+        "children": [
+          { "type": "Heading", "props": { "text": "Account Alerts", "level": 2 } },
+          {
+            "type": "Alert",
+            "props": {
+              "title": "Identity verification",
+              "message": "Verify your documents to unlock transfers.",
+              "severity": "warning",
+              "action": { "label": "Start", "name": "start_kyc" }
+            }
+          },
+          {
+            "type": "Alert",
+            "props": {
+              "title": "Scheduled maintenance",
+              "message": "Transfers pause at 02:00 UTC.",
+              "severity": "info"
+            }
+          },
+          {
+            "type": "ChoiceList",
+            "props": {
+              "question": "Notification frequency",
+              "options": [
+                { "id": "realtime", "label": "Real-time" },
+                { "id": "daily", "label": "Daily summary" },
+                { "id": "weekly", "label": "Weekly summary" }
+              ]
+            }
+          }
+        ]
       }
       """,
-      size: CGSize(width: 320, height: 120)
+      size: CGSize(width: 720, height: 760)
     ),
     .init(
-      name: "choice-list",
+      name: "financial-dashboard",
       json: """
       {
-        "type": "ChoiceList",
-        "props": {
-          "question": "Pick one",
-          "options": [
-            { "id": "1", "label": "Option A" },
-            { "id": "2", "label": "Option B" },
-            { "id": "3", "label": "Option C" }
-          ]
-        }
+        "type": "Stack",
+        "props": { "direction": "vertical", "spacing": 16, "alignment": "leading" },
+        "children": [
+          { "type": "Heading", "props": { "text": "Portfolio", "level": 1 } },
+          { "type": "BalanceCard", "props": { "brl": 256000, "btc": 5200000, "usdt": 800000, "showChange": true, "brlChange": 1.8 } },
+          { "type": "AssetPrice", "props": { "symbol": "BTC", "price": 240000.00, "change": 2500, "changePercent": 1.2 } },
+          { "type": "PieChart", "props": { "title": "Allocation", "segments": [ { "label": "BTC", "value": 60, "color": "#FFB100" }, { "label": "USDT", "value": 25, "color": "#5CB85C" }, { "label": "BRL", "value": 15, "color": "#3B82F6" } ] } },
+          { "type": "LineChart", "props": { "title": "Price trend", "points": [ { "x": "Mon", "y": 10 }, { "x": "Tue", "y": 14 }, { "x": "Wed", "y": 9 }, { "x": "Thu", "y": 16 }, { "x": "Fri", "y": 12 } ] } },
+          {
+            "type": "TransactionList",
+            "props": {
+              "transactions": [
+                { "description": "Coffee", "amount": -1500, "date": "2026-01-15", "category": "Food" },
+                { "description": "Salary", "amount": 250000, "date": "2026-01-01", "category": "Income" },
+                { "description": "Rent", "amount": -120000, "date": "2026-01-03", "category": "Housing" }
+              ]
+            }
+          }
+        ]
       }
       """,
-      size: CGSize(width: 320, height: 200)
-    ),
-    .init(
-      name: "alert",
-      json: """
-      { "type": "Alert", "props": { "title": "Heads up", "message": "Something happened.", "severity": "warning" } }
-      """,
-      size: CGSize(width: 320, height: 140)
-    ),
-    .init(
-      name: "balance-card",
-      json: """
-      { "type": "BalanceCard", "props": { "brl": 120000, "btc": 4200000, "usdt": 500000, "showChange": true, "brlChange": 2.4 } }
-      """,
-      size: CGSize(width: 320, height: 180)
-    ),
-    .init(
-      name: "transaction-row",
-      json: """
-      { "type": "TransactionRow", "props": { "description": "Coffee", "amount": -1500, "date": "2026-01-15", "category": "Food", "icon": "cup.and.saucer" } }
-      """,
-      size: CGSize(width: 320, height: 140)
-    ),
-    .init(
-      name: "transaction-list",
-      json: """
-      {
-        "type": "TransactionList",
-        "props": {
-          "transactions": [
-            { "description": "Coffee", "amount": -1500, "date": "2026-01-15", "category": "Food" },
-            { "description": "Salary", "amount": 250000, "date": "2026-01-01", "category": "Income" }
-          ]
-        }
-      }
-      """,
-      size: CGSize(width: 320, height: 220)
-    ),
-    .init(
-      name: "asset-price",
-      json: """
-      { "type": "AssetPrice", "props": { "symbol": "BTC", "price": 240000.00, "change": 2500, "changePercent": 1.2 } }
-      """,
-      size: CGSize(width: 320, height: 160)
-    ),
-    .init(
-      name: "pie-chart",
-      json: """
-      {
-        "type": "PieChart",
-        "props": {
-          "title": "Portfolio",
-          "segments": [
-            { "label": "BTC", "value": 60, "color": "#FFB100" },
-            { "label": "USDT", "value": 25, "color": "#5CB85C" },
-            { "label": "BRL", "value": 15, "color": "#3B82F6" }
-          ]
-        }
-      }
-      """,
-      size: CGSize(width: 320, height: 240)
-    ),
-    .init(
-      name: "line-chart",
-      json: """
-      {
-        "type": "LineChart",
-        "props": {
-          "title": "Price trend",
-          "points": [
-            { "x": "Mon", "y": 10 },
-            { "x": "Tue", "y": 14 },
-            { "x": "Wed", "y": 9 },
-            { "x": "Thu", "y": 16 },
-            { "x": "Fri", "y": 12 }
-          ]
-        }
-      }
-      """,
-      size: CGSize(width: 320, height: 240)
+      size: CGSize(width: 720, height: 980)
     ),
   ]
 }
@@ -244,17 +178,26 @@ struct PreviewSnapshotGenerator {
 
     try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: true)
 
+    #if canImport(AppKit)
+      await MainActor.run {
+        _ = NSApplication.shared
+        NSApp.setActivationPolicy(.prohibited)
+      }
+    #endif
+
     let registry = ComponentRegistry()
     registry.register(module: BuiltInComponentsModule())
 
     for spec in SnapshotSpec.all {
       let view = JSONView(spec.json)
         .componentRegistry(registry)
-        .padding(16)
+        .padding(20)
         .frame(width: spec.size.width, height: spec.size.height, alignment: .topLeading)
         .background(Color.white)
 
-      try await render(view: view, name: spec.name, outputDirectory: outputURL)
+      let framedView = PhoneFrameView(content: view)
+
+      try await render(view: framedView, name: spec.name, outputDirectory: outputURL)
     }
   }
 
@@ -263,7 +206,7 @@ struct PreviewSnapshotGenerator {
     name: String,
     outputDirectory: URL
   ) async throws {
-    let image = try await MainActor.run { () -> CGImage? in
+    let image = await MainActor.run { () -> CGImage? in
       let renderer = ImageRenderer(content: view)
       renderer.scale = 2
       return renderer.cgImage
@@ -292,5 +235,41 @@ struct PreviewSnapshotGenerator {
       return args[outputIndex + 1]
     }
     return "docs/images"
+  }
+}
+
+private struct PhoneFrameView<Content: View>: View {
+  let content: Content
+
+  private var frameSize: CGSize {
+    CGSize(width: 390, height: 844)
+  }
+
+  private var cornerRadius: CGFloat { 56 }
+
+  private var screenInsets: EdgeInsets {
+    EdgeInsets(top: 28, leading: 20, bottom: 28, trailing: 20)
+  }
+
+  var body: some View {
+    ZStack {
+      RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+        .fill(Color.black)
+
+      RoundedRectangle(cornerRadius: cornerRadius - 6, style: .continuous)
+        .fill(Color.white)
+        .padding(6)
+
+      RoundedRectangle(cornerRadius: cornerRadius - 12, style: .continuous)
+        .fill(Color(white: 0.98))
+        .padding(12)
+
+      content
+        .padding(screenInsets)
+        .frame(width: frameSize.width - 24, height: frameSize.height - 24, alignment: .topLeading)
+        .clipped()
+    }
+    .frame(width: frameSize.width, height: frameSize.height)
+    .background(Color(white: 0.95))
   }
 }

@@ -22,7 +22,7 @@ A Swift library for rendering JSON-defined UI into native SwiftUI views. Designe
 
 ## Visual Examples
 
-See the screenshot gallery and instructions in `docs/examples.md`.
+See the screenshot gallery and instructions in `docs/examples.md`, plus JSON → UI pairs in `docs/json-to-ui.md`.
 
 Generate the images automatically with `./scripts/generate-previews.sh`, or capture them manually from the previews in `Sources/SwiftUIJSONRender/PreviewSupport/ComponentPreviews.swift`.
 
