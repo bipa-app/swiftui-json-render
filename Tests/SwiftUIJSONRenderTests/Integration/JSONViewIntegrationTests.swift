@@ -685,7 +685,7 @@ struct JSONViewIntegrationTests {
     #expect(typeNames.contains("ChoiceList"))
     #expect(typeNames.contains("Button"))
     #expect(typeNames.contains("Alert"))
-    #expect(builders.count == 19)
+    #expect(builders.count == 25)
   }
 
   // MARK: - Complete Workflow

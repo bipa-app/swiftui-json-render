@@ -37,6 +37,7 @@ public struct JSONView: View {
   @Environment(\.componentTheme) private var themeType
   @Environment(\.renderStrings) private var stringsType
   @Environment(\.actionHandler) private var actionHandler
+  @Environment(\.inputHandler) private var inputHandler
   @Environment(\.componentRegistry) private var registry
   @Environment(\.unknownComponentBehavior) private var unknownComponentBehavior
 
@@ -107,6 +108,7 @@ public struct JSONView: View {
       themeType: themeType,
       stringsType: stringsType,
       actionHandler: actionHandler,
+      inputHandler: inputHandler,
       registry: registry,
       unknownComponentBehavior: unknownComponentBehavior
     )

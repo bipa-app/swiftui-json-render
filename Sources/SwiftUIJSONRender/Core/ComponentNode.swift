@@ -2,25 +2,44 @@ import Foundation
 
 /// The supported component types in the JSON schema.
 public enum ComponentType: Hashable, Sendable, Codable {
+  // Layout
   case stack
   case card
   case divider
   case spacer
+
+  // Content
   case text
   case heading
   case image
   case icon
+
+  // Financial (legacy — kept for backward compatibility)
   case balanceCard
   case transactionRow
   case transactionList
   case assetPrice
   case pieChart
   case lineChart
+
+  // Interactive (legacy)
   case button
   case amountInput
   case confirmDialog
   case choiceList
+
+  // Feedback
   case alert
+
+  // Agent UI Protocol primitives
+  case metric
+  case chart
+  case table
+  case list
+  case action
+  case input
+
+  // Extension point
   case custom(String)
 
   public init(rawValue: String) {
@@ -63,6 +82,19 @@ public enum ComponentType: Hashable, Sendable, Codable {
       self = .choiceList
     case "Alert":
       self = .alert
+    // Agent UI Protocol primitives
+    case "metric":
+      self = .metric
+    case "chart":
+      self = .chart
+    case "table":
+      self = .table
+    case "list":
+      self = .list
+    case "action":
+      self = .action
+    case "input":
+      self = .input
     default:
       self = .custom(rawValue)
     }
@@ -108,6 +140,19 @@ public enum ComponentType: Hashable, Sendable, Codable {
       return "ChoiceList"
     case .alert:
       return "Alert"
+    // Agent UI Protocol
+    case .metric:
+      return "metric"
+    case .chart:
+      return "chart"
+    case .table:
+      return "table"
+    case .list:
+      return "list"
+    case .action:
+      return "action"
+    case .input:
+      return "input"
     case .custom(let value):
       return value
     }
