@@ -47,20 +47,25 @@ private struct TableView: View {
   var body: some View {
     VStack(spacing: 0) {
       ForEach(Array(visibleRows.enumerated()), id: \.offset) { idx, row in
-        HStack {
+        HStack(alignment: .center) {
           Text(row.label)
             .font(context.captionFont)
             .foregroundStyle(context.textSecondary)
+
           Spacer()
+
           Text(row.value)
             .font(context.bodyFont)
             .foregroundStyle(context.textPrimary)
+            .multilineTextAlignment(.trailing)
         }
         .padding(.horizontal, context.spacingMD)
         .padding(.vertical, context.spacingSM)
 
         if idx < visibleRows.count - 1 || hasMore {
-          Divider().padding(.horizontal, context.spacingMD)
+          Divider()
+            .overlay(context.surfaceColor.opacity(0.5))
+            .padding(.horizontal, context.spacingMD)
         }
       }
 
@@ -80,6 +85,7 @@ private struct TableView: View {
           .frame(maxWidth: .infinity)
           .padding(.vertical, context.spacingSM)
         }
+        .buttonStyle(.plain)
       }
     }
     .background(

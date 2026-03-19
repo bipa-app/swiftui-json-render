@@ -2,8 +2,10 @@ import SwiftUI
 
 /// `action` — Tappable button / action row.
 ///
+/// Styles: "primary" (filled), "secondary" (surface bg), "destructive" (error filled).
+///
 /// ```json
-/// { "type": "action", "props": { "label": "Comprar Bitcoin", "icon": "btc", "style": "primary", "action": { "name": "message", "params": { "text": "Quero comprar BTC" } } } }
+/// { "type": "action", "props": { "label": "Comprar Bitcoin", "icon": "btc", "style": "primary", "action": { "name": "buy_btc" } } }
 /// ```
 public struct ActionBuilder: ComponentBuilder {
   public static var typeName: String { "action" }
@@ -33,20 +35,19 @@ private struct ActionView: View {
   let actionValue: AnyCodable?
   let context: RenderContext
 
+  private var isPrimary: Bool { style == "primary" }
+  private var isDestructive: Bool { style == "destructive" }
+
   private var bgColor: Color {
-    switch style {
-    case "primary": context.primaryColor
-    case "destructive": context.errorColor
-    default: context.surfaceColor
-    }
+    if isPrimary { return context.primaryColor }
+    if isDestructive { return context.errorColor }
+    return context.surfaceColor
   }
 
   private var fgColor: Color {
-    switch style {
-    case "primary": context.buttonPrimaryForeground
-    case "destructive": context.buttonDestructiveForeground
-    default: context.textPrimary
-    }
+    if isPrimary { return context.buttonPrimaryForeground }
+    if isDestructive { return context.buttonDestructiveForeground }
+    return context.textPrimary
   }
 
   var body: some View {
@@ -55,7 +56,7 @@ private struct ActionView: View {
     } label: {
       HStack(spacing: context.spacingSM) {
         if let icon {
-          IconResolver.view(for: icon, context: context)
+          Image(systemName: IconResolver.sfSymbol(for: icon))
             .font(.body)
         }
         Text(label)
@@ -66,8 +67,7 @@ private struct ActionView: View {
       .padding(.vertical, context.spacingSM)
       .padding(.horizontal, context.spacingMD)
       .background(
-        RoundedRectangle(cornerRadius: context.radiusLG)
-          .fill(bgColor)
+        Capsule().fill(bgColor)
       )
     }
     .buttonStyle(.plain)

@@ -12,7 +12,8 @@ public struct ChartBuilder: ComponentBuilder {
   public static func build(node: ComponentNode, context: RenderContext) -> AnyView {
     let style = node.string("style") ?? "sparkline"
     let data = node.array("data")?.compactMap { ($0 as? NSNumber)?.doubleValue } ?? []
-    let color = ColorResolver.resolve(node.string("color"), context: context) ?? context.primaryColor
+    let color =
+      ColorResolver.resolve(node.string("color"), context: context) ?? context.primaryColor
     let height = node.double("height") ?? Double(context.chartHeight)
     let labels = node.array("labels")?.compactMap { $0 as? String }
     let progressValue = node.double("value") ?? 0
@@ -36,6 +37,7 @@ public struct ChartBuilder: ComponentBuilder {
 
 // MARK: - Sparkline
 
+/// Smooth Bézier sparkline with rounded caps — matches BipaChart.SparkLine style.
 private struct SparklineChartView: View {
   let data: [Double]
   let color: Color
@@ -45,23 +47,28 @@ private struct SparklineChartView: View {
       let minY = data.min() ?? 0
       let maxY = data.max() ?? 1
       let range = max(maxY - minY, 1)
+      let w = geo.size.width
+      let h = geo.size.height
 
       Path { path in
-        let points = data.enumerated().map { i, value in
+        let pts = data.enumerated().map { i, v in
           CGPoint(
-            x: geo.size.width * CGFloat(i) / CGFloat(max(data.count - 1, 1)),
-            y: geo.size.height * (1 - CGFloat((value - minY) / range))
+            x: w * CGFloat(i) / CGFloat(max(data.count - 1, 1)),
+            y: h * (1 - CGFloat((v - minY) / range))
           )
         }
-        guard let first = points.first else { return }
+        guard let first = pts.first else { return }
         path.move(to: first)
-        for i in 1..<points.count {
-          let ctrl = CGPoint(x: (points[i].x + points[i-1].x) / 2, y: points[i-1].y)
-          let ctrl2 = CGPoint(x: (points[i].x + points[i-1].x) / 2, y: points[i].y)
-          path.addCurve(to: points[i], control1: ctrl, control2: ctrl2)
+        for i in 1..<pts.count {
+          let cx = (pts[i].x + pts[i - 1].x) / 2
+          path.addCurve(
+            to: pts[i],
+            control1: CGPoint(x: cx, y: pts[i - 1].y),
+            control2: CGPoint(x: cx, y: pts[i].y)
+          )
         }
       }
-      .stroke(color, style: StrokeStyle(lineWidth: 3, lineCap: .round, lineJoin: .round))
+      .stroke(color, style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
     }
   }
 }
@@ -81,16 +88,18 @@ private struct BarChartView: View {
       HStack(alignment: .bottom, spacing: context.spacingXS) {
         ForEach(Array(data.enumerated()), id: \.offset) { i, value in
           VStack(spacing: context.spacingXS) {
+            Spacer(minLength: 0)
+
             RoundedRectangle(cornerRadius: context.radiusSM)
-              .fill(color.opacity(0.2 + 0.8 * value / maxVal))
-              .frame(height: max(4, geo.size.height * CGFloat(value / maxVal)))
+              .fill(color.opacity(0.25 + 0.75 * value / maxVal))
+              .frame(height: max(4, geo.size.height * 0.85 * CGFloat(value / maxVal)))
 
             if let labels, i < labels.count {
               Text(labels[i])
                 .font(context.captionFont)
                 .foregroundStyle(context.textSecondary)
                 .lineLimit(1)
-                .minimumScaleFactor(0.6)
+                .minimumScaleFactor(0.5)
             }
           }
           .frame(maxWidth: .infinity)

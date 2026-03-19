@@ -59,6 +59,24 @@ private struct InputContainerView: View {
   }
 }
 
+// MARK: - Option parsing
+
+private struct OptionItem: Identifiable {
+  let id: String
+  let label: String
+  let subtitle: String?
+}
+
+private func parseOptions(from node: ComponentNode) -> [OptionItem] {
+  node.array("options")?.compactMap { item -> OptionItem? in
+    guard let dict = item as? [String: Any],
+          let id = dict["id"] as? String,
+          let label = dict["label"] as? String
+    else { return nil }
+    return OptionItem(id: id, label: label, subtitle: dict["subtitle"] as? String)
+  } ?? []
+}
+
 // MARK: - Text Input
 
 private struct TextInputView: View {
@@ -68,13 +86,12 @@ private struct TextInputView: View {
   @State private var text = ""
 
   var body: some View {
-    let placeholder = node.string("placeholder") ?? ""
-
-    HStack {
-      TextField(placeholder, text: $text)
+    HStack(spacing: context.spacingSM) {
+      TextField(node.string("placeholder") ?? "", text: $text)
         .font(context.bodyFont)
         .textFieldStyle(.plain)
         .onSubmit {
+          guard !text.isEmpty else { return }
           context.handleInput(InputResponse(inputId: inputId, value: .text(text)))
         }
 
@@ -86,6 +103,7 @@ private struct TextInputView: View {
             .font(.title3)
             .foregroundStyle(context.primaryColor)
         }
+        .buttonStyle(.plain)
       }
     }
     .padding(context.spacingSM)
@@ -96,7 +114,7 @@ private struct TextInputView: View {
   }
 }
 
-// MARK: - Choice Input
+// MARK: - Choice Input (radio)
 
 private struct ChoiceInputView: View {
   let inputId: String
@@ -104,36 +122,29 @@ private struct ChoiceInputView: View {
   let context: RenderContext
   @State private var selectedId: String?
 
-  private var options: [(id: String, label: String, subtitle: String?)] {
-    node.array("options")?.compactMap { item -> (String, String, String?)? in
-      guard let dict = item as? [String: Any],
-            let id = dict["id"] as? String,
-            let label = dict["label"] as? String
-      else { return nil }
-      return (id, label, dict["subtitle"] as? String)
-    } ?? []
-  }
+  private var options: [OptionItem] { parseOptions(from: node) }
 
   var body: some View {
     VStack(spacing: 0) {
       ForEach(Array(options.enumerated()), id: \.element.id) { idx, option in
         Button {
-          selectedId = option.id
+          withAnimation(.bouncy(duration: 0.2)) {
+            selectedId = option.id
+          }
           context.handleInput(InputResponse(inputId: inputId, value: .choice(option.id)))
         } label: {
-          HStack {
-            Circle()
-              .strokeBorder(
-                selectedId == option.id ? context.primaryColor : context.textSecondary.opacity(0.3),
-                lineWidth: 1.5
-              )
-              .background(
-                Circle().fill(selectedId == option.id ? context.primaryColor : Color.clear)
-                  .padding(4)
-              )
-              .frame(width: 22, height: 22)
+          HStack(spacing: context.spacingMD) {
+            // Radio circle — matches Apolo RadioButton
+            ZStack {
+              Circle()
+                .fill(selectedId == option.id ? context.textPrimary : Color.clear)
+                .frame(width: 10, height: 10)
+              Circle()
+                .stroke(context.textSecondary.opacity(0.5), lineWidth: 1)
+                .frame(width: 24, height: 24)
+            }
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: context.spacingXS) {
               Text(option.label)
                 .font(context.bodyFont)
                 .foregroundStyle(context.textPrimary)
@@ -148,11 +159,15 @@ private struct ChoiceInputView: View {
           }
           .padding(.horizontal, context.spacingMD)
           .padding(.vertical, context.spacingSM)
+          .frame(minHeight: 56)
+          .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
 
         if idx < options.count - 1 {
-          Divider().padding(.horizontal, context.spacingMD)
+          Divider()
+            .overlay(context.surfaceColor.opacity(0.5))
+            .padding(.horizontal, context.spacingMD)
         }
       }
     }
@@ -163,7 +178,7 @@ private struct ChoiceInputView: View {
   }
 }
 
-// MARK: - Multi Choice Input
+// MARK: - Multi Choice Input (checkbox)
 
 private struct MultiChoiceInputView: View {
   let inputId: String
@@ -171,37 +186,32 @@ private struct MultiChoiceInputView: View {
   let context: RenderContext
   @State private var selectedIds: Set<String> = []
 
-  private var options: [(id: String, label: String, subtitle: String?)] {
-    node.array("options")?.compactMap { item -> (String, String, String?)? in
-      guard let dict = item as? [String: Any],
-            let id = dict["id"] as? String,
-            let label = dict["label"] as? String
-      else { return nil }
-      return (id, label, dict["subtitle"] as? String)
-    } ?? []
-  }
+  private var options: [OptionItem] { parseOptions(from: node) }
 
   var body: some View {
     VStack(spacing: 0) {
       ForEach(Array(options.enumerated()), id: \.element.id) { idx, option in
+        let isSelected = selectedIds.contains(option.id)
+
         Button {
-          if selectedIds.contains(option.id) {
-            selectedIds.remove(option.id)
-          } else {
-            selectedIds.insert(option.id)
+          withAnimation(.bouncy(duration: 0.2)) {
+            if isSelected {
+              selectedIds.remove(option.id)
+            } else {
+              selectedIds.insert(option.id)
+            }
           }
           context.handleInput(
             InputResponse(inputId: inputId, value: .multiChoice(Array(selectedIds)))
           )
         } label: {
-          HStack {
-            Image(systemName: selectedIds.contains(option.id) ? "checkmark.square.fill" : "square")
-              .foregroundStyle(
-                selectedIds.contains(option.id) ? context.primaryColor : context.textSecondary.opacity(0.3)
-              )
+          HStack(spacing: context.spacingMD) {
+            // Checkbox — matches Apolo Checkbox
+            Image(systemName: isSelected ? "checkmark.square.fill" : "square")
               .font(.title3)
+              .foregroundStyle(isSelected ? context.textPrimary : context.textSecondary.opacity(0.5))
 
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: context.spacingXS) {
               Text(option.label)
                 .font(context.bodyFont)
                 .foregroundStyle(context.textPrimary)
@@ -216,11 +226,15 @@ private struct MultiChoiceInputView: View {
           }
           .padding(.horizontal, context.spacingMD)
           .padding(.vertical, context.spacingSM)
+          .frame(minHeight: 56)
+          .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
 
         if idx < options.count - 1 {
-          Divider().padding(.horizontal, context.spacingMD)
+          Divider()
+            .overlay(context.surfaceColor.opacity(0.5))
+            .padding(.horizontal, context.spacingMD)
         }
       }
     }
@@ -231,7 +245,7 @@ private struct MultiChoiceInputView: View {
   }
 }
 
-// MARK: - Confirm Input
+// MARK: - Confirm Input (yes/no)
 
 private struct ConfirmInputView: View {
   let inputId: String
@@ -239,31 +253,28 @@ private struct ConfirmInputView: View {
   let context: RenderContext
 
   var body: some View {
-    let confirmLabel = node.string("confirmLabel") ?? "Sim"
-    let cancelLabel = node.string("cancelLabel") ?? "Não"
-
     HStack(spacing: context.spacingSM) {
       Button {
         context.handleInput(InputResponse(inputId: inputId, value: .bool(false)))
       } label: {
-        Text(cancelLabel)
+        Text(node.string("cancelLabel") ?? "Não")
           .font(context.bodyFont)
           .foregroundStyle(context.textPrimary)
           .frame(maxWidth: .infinity)
           .padding(.vertical, context.spacingSM)
-          .background(RoundedRectangle(cornerRadius: context.radiusLG).fill(context.surfaceColor))
+          .background(Capsule().fill(context.surfaceColor))
       }
       .buttonStyle(.plain)
 
       Button {
         context.handleInput(InputResponse(inputId: inputId, value: .bool(true)))
       } label: {
-        Text(confirmLabel)
+        Text(node.string("confirmLabel") ?? "Sim")
           .font(context.bodyFont)
           .foregroundStyle(context.buttonPrimaryForeground)
           .frame(maxWidth: .infinity)
           .padding(.vertical, context.spacingSM)
-          .background(RoundedRectangle(cornerRadius: context.radiusLG).fill(context.primaryColor))
+          .background(Capsule().fill(context.primaryColor))
       }
       .buttonStyle(.plain)
     }
@@ -277,26 +288,32 @@ private struct SliderInputView: View {
   let node: ComponentNode
   let context: RenderContext
   @State private var value: Double = 0
+  @State private var didAppear = false
+
+  private var min: Double { node.double("min") ?? 0 }
+  private var max: Double { node.double("max") ?? 100 }
+  private var step: Double { node.double("step") ?? 1 }
+  private var unit: String { node.string("unit") ?? "" }
 
   var body: some View {
-    let min = node.double("min") ?? 0
-    let max = node.double("max") ?? 100
-    let step = node.double("step") ?? 1
-    let unit = node.string("unit") ?? ""
-
     VStack(spacing: context.spacingXS) {
       HStack {
-        Text(String(format: "%.0f%@", value, unit.isEmpty ? "" : " \(unit)"))
+        Text(String(format: "%.0f", value) + (unit.isEmpty ? "" : " \(unit)"))
           .font(context.headingFont)
           .foregroundStyle(context.textPrimary)
         Spacer()
       }
 
-      Slider(value: $value, in: min...max, step: step) { _ in
-        context.handleInput(InputResponse(inputId: inputId, value: .number(value)))
-      }
-      .tint(context.primaryColor)
+      Slider(value: $value, in: min...max, step: step)
+        .tint(context.primaryColor)
+        .onChange(of: value) { newValue in
+          guard didAppear else { return }
+          context.handleInput(InputResponse(inputId: inputId, value: .number(newValue)))
+        }
     }
-    .onAppear { value = min }
+    .onAppear {
+      value = min
+      didAppear = true
+    }
   }
 }

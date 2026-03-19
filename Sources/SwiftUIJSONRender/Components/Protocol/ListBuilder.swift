@@ -70,7 +70,9 @@ private struct ListView: View {
         ListItemRow(item: item, context: context)
 
         if idx < inlineItems.count - 1 || hasMore {
-          Divider().padding(.horizontal, context.spacingMD)
+          Divider()
+            .overlay(context.surfaceColor.opacity(0.5))
+            .padding(.horizontal, context.spacingMD)
         }
       }
 
@@ -88,6 +90,7 @@ private struct ListView: View {
           .frame(maxWidth: .infinity)
           .padding(.vertical, context.spacingSM)
         }
+        .buttonStyle(.plain)
       }
     }
     .sheet(isPresented: $showSheet) {
@@ -103,13 +106,13 @@ private struct ListItemRow: View {
   var body: some View {
     HStack(spacing: context.spacingSM) {
       if let icon = item.icon {
-        IconResolver.view(for: icon, context: context)
+        Image(systemName: IconResolver.sfSymbol(for: icon))
           .font(.body)
           .foregroundStyle(context.textSecondary)
-          .frame(width: 24, height: 24)
+          .frame(width: 28, height: 28)
       }
 
-      VStack(alignment: .leading, spacing: 2) {
+      VStack(alignment: .leading, spacing: context.spacingXS) {
         Text(item.title)
           .font(context.bodyFont)
           .foregroundStyle(context.textPrimary)
@@ -149,8 +152,11 @@ private struct ListSheetView: View {
         LazyVStack(spacing: 0) {
           ForEach(Array(items.enumerated()), id: \.element.id) { idx, item in
             ListItemRow(item: item, context: context)
+
             if idx < items.count - 1 {
-              Divider().padding(.horizontal, context.spacingMD)
+              Divider()
+                .overlay(context.surfaceColor.opacity(0.5))
+                .padding(.horizontal, context.spacingMD)
             }
           }
         }
@@ -161,6 +167,7 @@ private struct ListSheetView: View {
         .padding(.horizontal, context.spacingMD)
         .padding(.vertical, context.spacingSM)
       }
+      .background(context.backgroundColor)
       #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
       #endif

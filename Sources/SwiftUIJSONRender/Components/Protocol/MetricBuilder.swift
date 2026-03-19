@@ -41,10 +41,10 @@ private struct MetricView: View {
     HStack(spacing: context.spacingSM) {
       if let icon {
         IconResolver.view(for: icon, context: context)
-          .font(.title3)
+          .font(.title2)
       }
 
-      VStack(alignment: .leading, spacing: 2) {
+      VStack(alignment: .leading, spacing: context.spacingXS) {
         Text(label)
           .font(context.captionFont)
           .foregroundStyle(context.textSecondary)
@@ -52,6 +52,8 @@ private struct MetricView: View {
         Text(value)
           .font(context.headingFont)
           .foregroundStyle(context.textPrimary)
+          .lineLimit(1)
+          .minimumScaleFactor(0.7)
 
         if let caption {
           Text(caption)
