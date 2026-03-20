@@ -12,7 +12,7 @@ public struct SchemaVersion: Sendable, Equatable, Hashable {
   public let patch: Int
 
   /// The current schema version supported by this library.
-  public static let current = SchemaVersion(1, 0, 0)
+  public static let current = SchemaVersion(1, 1, 0)
 
   /// The minimum schema version supported by this library.
   /// JSON with versions older than this may not render correctly.
