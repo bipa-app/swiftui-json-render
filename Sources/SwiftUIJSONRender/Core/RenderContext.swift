@@ -14,6 +14,9 @@ public struct RenderContext {
   /// The action handler closure, if provided.
   public let actionHandler: ActionHandler?
 
+  /// The input handler closure, if provided (for `input` components).
+  public let inputHandler: InputHandler?
+
   /// The component registry to use for looking up builders.
   public let registry: ComponentRegistry
 
@@ -31,12 +34,14 @@ public struct RenderContext {
     themeType: any JSONRenderTheme.Type = DefaultTheme.self,
     stringsType: any JSONRenderStrings.Type = DefaultStrings.self,
     actionHandler: ActionHandler? = nil,
+    inputHandler: InputHandler? = nil,
     registry: ComponentRegistry = .shared,
     unknownComponentBehavior: UnknownComponentBehavior = .placeholder
   ) {
     self.themeType = themeType
     self.stringsType = stringsType
     self.actionHandler = actionHandler
+    self.inputHandler = inputHandler
     self.registry = registry
     self.unknownComponentBehavior = unknownComponentBehavior
   }
@@ -92,64 +97,55 @@ public struct RenderContext {
   /// - Returns: A new context with the updated theme.
   public func with(themeType: any JSONRenderTheme.Type) -> RenderContext {
     RenderContext(
-      themeType: themeType,
-      stringsType: stringsType,
-      actionHandler: actionHandler,
-      registry: registry,
-      unknownComponentBehavior: unknownComponentBehavior
+      themeType: themeType, stringsType: stringsType,
+      actionHandler: actionHandler, inputHandler: inputHandler,
+      registry: registry, unknownComponentBehavior: unknownComponentBehavior
     )
   }
 
-  /// Creates a new context with an updated strings type.
-  /// - Parameter stringsType: The new strings type.
-  /// - Returns: A new context with the updated strings.
   public func with(stringsType: any JSONRenderStrings.Type) -> RenderContext {
     RenderContext(
-      themeType: themeType,
-      stringsType: stringsType,
-      actionHandler: actionHandler,
-      registry: registry,
-      unknownComponentBehavior: unknownComponentBehavior
+      themeType: themeType, stringsType: stringsType,
+      actionHandler: actionHandler, inputHandler: inputHandler,
+      registry: registry, unknownComponentBehavior: unknownComponentBehavior
     )
   }
 
-  /// Creates a new context with an updated action handler.
-  /// - Parameter actionHandler: The new action handler.
-  /// - Returns: A new context with the updated handler.
   public func with(actionHandler: ActionHandler?) -> RenderContext {
     RenderContext(
-      themeType: themeType,
-      stringsType: stringsType,
-      actionHandler: actionHandler,
-      registry: registry,
-      unknownComponentBehavior: unknownComponentBehavior
+      themeType: themeType, stringsType: stringsType,
+      actionHandler: actionHandler, inputHandler: inputHandler,
+      registry: registry, unknownComponentBehavior: unknownComponentBehavior
     )
   }
 
-  /// Creates a new context with an updated registry.
-  /// - Parameter registry: The new registry.
-  /// - Returns: A new context with the updated registry.
+  public func with(inputHandler: InputHandler?) -> RenderContext {
+    RenderContext(
+      themeType: themeType, stringsType: stringsType,
+      actionHandler: actionHandler, inputHandler: inputHandler,
+      registry: registry, unknownComponentBehavior: unknownComponentBehavior
+    )
+  }
+
   public func with(registry: ComponentRegistry) -> RenderContext {
     RenderContext(
-      themeType: themeType,
-      stringsType: stringsType,
-      actionHandler: actionHandler,
-      registry: registry,
-      unknownComponentBehavior: unknownComponentBehavior
+      themeType: themeType, stringsType: stringsType,
+      actionHandler: actionHandler, inputHandler: inputHandler,
+      registry: registry, unknownComponentBehavior: unknownComponentBehavior
     )
   }
 
-  /// Creates a new context with an updated unknown component behavior.
-  /// - Parameter behavior: The new behavior for unknown components.
-  /// - Returns: A new context with the updated behavior.
   public func with(unknownComponentBehavior behavior: UnknownComponentBehavior) -> RenderContext {
     RenderContext(
-      themeType: themeType,
-      stringsType: stringsType,
-      actionHandler: actionHandler,
-      registry: registry,
-      unknownComponentBehavior: behavior
+      themeType: themeType, stringsType: stringsType,
+      actionHandler: actionHandler, inputHandler: inputHandler,
+      registry: registry, unknownComponentBehavior: behavior
     )
+  }
+
+  /// Sends an input response through the input handler.
+  public func handleInput(_ response: InputResponse) {
+    inputHandler?(response)
   }
 }
 

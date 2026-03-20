@@ -101,7 +101,7 @@ struct ComponentRegistryTests {
     #expect(types.contains("ChoiceList"))
     #expect(types.contains("Button"))
     #expect(types.contains("Alert"))
-    #expect(types.count == 19)
+    #expect(types.count == 25)
   }
 
   @Test("registeredTypes is sorted")
@@ -143,7 +143,7 @@ struct ComponentRegistryTests {
     let registry = ComponentRegistry()
     registry.register(module: BuiltInComponentsModule())
 
-    #expect(registry.registeredTypes.count == 19)
+    #expect(registry.registeredTypes.count == 25)
 
     registry.unregisterAll()
 

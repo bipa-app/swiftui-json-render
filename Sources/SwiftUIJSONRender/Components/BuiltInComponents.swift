@@ -36,6 +36,14 @@ public struct BuiltInComponentsModule: ComponentModule {
 
       // Feedback
       AnyComponentBuilder(AlertBuilder.self),
+
+      // Agent UI Protocol primitives
+      AnyComponentBuilder(MetricBuilder.self),
+      AnyComponentBuilder(ChartBuilder.self),
+      AnyComponentBuilder(TableBuilder.self),
+      AnyComponentBuilder(ListBuilder.self),
+      AnyComponentBuilder(ActionBuilder.self),
+      AnyComponentBuilder(InputBuilder.self),
     ]
   }
 }

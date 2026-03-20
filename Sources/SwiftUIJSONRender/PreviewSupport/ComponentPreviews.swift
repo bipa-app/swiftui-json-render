@@ -380,6 +380,263 @@ import SwiftUI
               }
               """)
           }
+
+          previewSection("Protocol — Metric") {
+            JSONView(
+              """
+              { "type": "metric", "props": { "label": "Bitcoin", "value": "R$ 374.438", "caption": "+0.8%", "captionColor": "green", "icon": "btc" } }
+              """)
+            JSONView(
+              """
+              { "type": "metric", "props": { "label": "Dólar", "value": "$ 85,03", "icon": "usdt" } }
+              """)
+            JSONView(
+              """
+              { "type": "metric", "props": { "label": "Reais", "value": "R$ 12.345,67", "caption": "Saldo disponível", "icon": "brl" } }
+              """)
+            JSONView(
+              """
+              { "type": "metric", "props": { "label": "Portfólio BTC", "value": "R$ 3.720.523", "caption": "+34.5%", "captionColor": "green", "icon": "btc" } }
+              """)
+            JSONView(
+              """
+              { "type": "metric", "props": { "label": "Fatura fechada", "value": "R$ 3.456,00", "caption": "Vence 10/04", "captionColor": "yellow", "icon": "card" } }
+              """)
+          }
+
+          previewSection("Protocol — Chart") {
+            JSONView(
+              """
+              { "type": "chart", "props": { "style": "sparkline", "data": [640,642,638,645,648,644,650,652,649,655,653,656], "color": "violet" } }
+              """)
+            JSONView(
+              """
+              { "type": "chart", "props": { "style": "sparkline", "data": [5.52,5.54,5.53,5.55,5.54,5.56,5.55,5.57], "color": "green" } }
+              """)
+            JSONView(
+              """
+              { "type": "chart", "props": { "style": "bar", "data": [1200, 800, 600, 450, 300], "labels": ["Alimentação", "Transporte", "Moradia", "Lazer", "Saúde"], "color": "violet" } }
+              """)
+            JSONView(
+              """
+              { "type": "chart", "props": { "style": "progress", "value": 0.62, "color": "green" } }
+              """)
+            JSONView(
+              """
+              { "type": "chart", "props": { "style": "progress", "value": 0.15, "color": "red" } }
+              """)
+          }
+
+          previewSection("Protocol — Table") {
+            JSONView(
+              """
+              {
+                "type": "table",
+                "props": {
+                  "rows": [
+                    { "label": "Destinatário", "value": "João Silva" },
+                    { "label": "CPF", "value": "***8900" },
+                    { "label": "Banco", "value": "Nubank" },
+                    { "label": "Tipo", "value": "Chave CPF" }
+                  ],
+                  "maxVisible": 3
+                }
+              }
+              """)
+            JSONView(
+              """
+              {
+                "type": "table",
+                "props": {
+                  "rows": [
+                    { "label": "Ativo", "value": "PIX" },
+                    { "label": "Período", "value": "Diurno" }
+                  ]
+                }
+              }
+              """)
+          }
+
+          previewSection("Protocol — List") {
+            JSONView(
+              """
+              {
+                "type": "list",
+                "props": {
+                  "maxVisible": 3,
+                  "expandLabel": "Ver todas (20)",
+                  "items": [
+                    { "title": "PIX para Maria Silva", "subtitle": "18/03 14:32", "trailing": "R$ 250", "trailingColor": "red", "icon": "arrow.up.right" },
+                    { "title": "PIX recebido de João", "subtitle": "18/03 10:15", "trailing": "+R$ 1.500", "trailingColor": "green", "icon": "arrow.down.left" },
+                    { "title": "iFood", "subtitle": "17/03 20:45", "trailing": "R$ 45,90", "icon": "creditcard" },
+                    { "title": "Compra Bitcoin", "subtitle": "17/03 09:00", "trailing": "R$ 500", "icon": "bitcoinsign.circle" },
+                    { "title": "Aluguel", "subtitle": "15/03 08:00", "trailing": "R$ 2.500", "trailingColor": "red", "icon": "arrow.up.right" }
+                  ]
+                }
+              }
+              """)
+          }
+
+          previewSection("Protocol — Action") {
+            JSONView(
+              """
+              { "type": "action", "props": { "label": "Comprar Bitcoin", "icon": "btc", "style": "primary", "action": { "name": "buy_btc" } } }
+              """)
+            JSONView(
+              """
+              { "type": "action", "props": { "label": "Cancelar transferência", "style": "destructive", "action": { "name": "cancel" } } }
+              """)
+            JSONView(
+              """
+              { "type": "action", "props": { "label": "Ver detalhes", "icon": "arrow.right", "style": "secondary", "action": { "name": "details" } } }
+              """)
+          }
+
+          previewSection("Protocol — Input") {
+            JSONView(
+              """
+              { "type": "input", "props": { "inputType": "text", "id": "pix_key", "label": "Para qual chave PIX?", "placeholder": "CPF, e-mail ou telefone" } }
+              """)
+            JSONView(
+              """
+              {
+                "type": "input",
+                "props": {
+                  "inputType": "choice",
+                  "id": "goal",
+                  "label": "Qual seu objetivo?",
+                  "options": [
+                    { "id": "emergency", "label": "Reserva de emergência", "subtitle": "3-6 meses de gastos" },
+                    { "id": "retirement", "label": "Aposentadoria", "subtitle": "Longo prazo" },
+                    { "id": "travel", "label": "Viagem", "subtitle": "Próximos 12 meses" }
+                  ]
+                }
+              }
+              """)
+            JSONView(
+              """
+              {
+                "type": "input",
+                "props": {
+                  "inputType": "multiChoice",
+                  "id": "categories",
+                  "label": "Quais categorias quer acompanhar?",
+                  "options": [
+                    { "id": "food", "label": "Alimentação" },
+                    { "id": "transport", "label": "Transporte" },
+                    { "id": "housing", "label": "Moradia" },
+                    { "id": "leisure", "label": "Lazer" }
+                  ]
+                }
+              }
+              """)
+            JSONView(
+              """
+              { "type": "input", "props": { "inputType": "confirm", "id": "proceed", "label": "Deseja continuar?", "confirmLabel": "Sim, continuar", "cancelLabel": "Não" } }
+              """)
+            JSONView(
+              """
+              { "type": "input", "props": { "inputType": "slider", "id": "risk", "label": "Nível de risco", "min": 1, "max": 10, "step": 1 } }
+              """)
+          }
+
+          previewSection("Protocol — Composed: Balance Overview") {
+            JSONView(
+              """
+              {
+                "type": "Card",
+                "children": [
+                  { "type": "metric", "props": { "label": "Bitcoin", "value": "5.200.000 sats", "caption": "~R$ 3.720.523", "icon": "btc" } },
+                  { "type": "metric", "props": { "label": "Dólar", "value": "$ 85,03", "icon": "usdt" } },
+                  { "type": "metric", "props": { "label": "Reais", "value": "R$ 12.345,67", "icon": "brl" } }
+                ]
+              }
+              """)
+          }
+
+          previewSection("Protocol — Composed: Price Card") {
+            JSONView(
+              """
+              {
+                "type": "Card",
+                "props": { "title": "Bitcoin" },
+                "children": [
+                  { "type": "chart", "props": { "style": "sparkline", "data": [640,642,638,645,648,644,650,652,649,655,653,656], "color": "violet" } },
+                  { "type": "Stack", "props": { "direction": "horizontal" }, "children": [
+                    { "type": "metric", "props": { "label": "Preço", "value": "R$ 656.460" } },
+                    { "type": "metric", "props": { "label": "Variação", "value": "+0.8%", "captionColor": "green" } }
+                  ]}
+                ]
+              }
+              """)
+          }
+
+          previewSection("Protocol — Composed: Confirmation Card") {
+            JSONView(
+              """
+              {
+                "type": "Card",
+                "children": [
+                  { "type": "metric", "props": { "label": "PIX para João Silva", "value": "R$ 50,00", "icon": "arrow.up.right" } },
+                  { "type": "table", "props": { "rows": [
+                    { "label": "CPF", "value": "***8900" },
+                    { "label": "Banco", "value": "Nubank" },
+                    { "label": "Tipo", "value": "Chave CPF" }
+                  ] } },
+                  { "type": "Stack", "props": { "direction": "horizontal", "spacing": 8 }, "children": [
+                    { "type": "action", "props": { "label": "Cancelar", "style": "secondary", "action": { "name": "cancel" } } },
+                    { "type": "action", "props": { "label": "Confirmar", "style": "primary", "action": { "name": "confirm" } } }
+                  ]}
+                ]
+              }
+              """)
+          }
+
+          previewSection("Protocol — Composed: Financial Plan Input") {
+            JSONView(
+              """
+              {
+                "type": "Card",
+                "props": { "title": "Planejamento financeiro" },
+                "children": [
+                  { "type": "input", "props": { "inputType": "text", "id": "income", "label": "Qual sua renda mensal?", "placeholder": "R$ 0,00" } },
+                  { "type": "input", "props": {
+                    "inputType": "multiChoice",
+                    "id": "goals",
+                    "label": "Quais são seus objetivos?",
+                    "options": [
+                      { "id": "emergency", "label": "Reserva de emergência", "subtitle": "3-6 meses" },
+                      { "id": "retirement", "label": "Aposentadoria", "subtitle": "Longo prazo" },
+                      { "id": "travel", "label": "Viagem" }
+                    ]
+                  } },
+                  { "type": "input", "props": { "inputType": "slider", "id": "risk", "label": "Tolerância a risco", "min": 1, "max": 5, "step": 1 } },
+                  { "type": "action", "props": { "label": "Gerar meu plano", "style": "primary", "action": { "name": "generate_plan" } } }
+                ]
+              }
+              """)
+          }
+
+          previewSection("Protocol — Composed: Spending Report") {
+            JSONView(
+              """
+              {
+                "type": "Stack",
+                "props": { "direction": "vertical", "spacing": 12 },
+                "children": [
+                  { "type": "metric", "props": { "label": "Total gasto", "value": "R$ 4.523,00", "caption": "+12% vs fevereiro", "captionColor": "red" } },
+                  { "type": "chart", "props": { "style": "bar", "data": [1200, 800, 600, 450, 300], "labels": ["Alimentação", "Transporte", "Moradia", "Lazer", "Saúde"], "color": "violet" } },
+                  { "type": "list", "props": {
+                    "items": [
+                      { "title": "Alimentação", "subtitle": "23 transações", "trailing": "R$ 1.200", "icon": "fork.knife" },
+                      { "title": "Transporte", "subtitle": "12 transações", "trailing": "R$ 800", "icon": "car.fill" },
+                      { "title": "Moradia", "subtitle": "3 transações", "trailing": "R$ 600", "icon": "house.fill" }
+                    ]
+                  } }
+                ]
+              }
+              """)
+          }
         }
         .padding(16)
       }
