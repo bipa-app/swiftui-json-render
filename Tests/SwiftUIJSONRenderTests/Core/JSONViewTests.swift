@@ -87,7 +87,7 @@ struct JSONViewTests {
   func testCurrentVersionAccepted() {
     let json = """
       {
-        "schemaVersion": "1.1.0",
+        "schemaVersion": "1.2.0",
         "type": "Text",
         "props": { "content": "Hello" }
       }
@@ -102,7 +102,7 @@ struct JSONViewTests {
   func testCompatibleMinorVersionAccepted() {
     let json = """
       {
-        "schemaVersion": "1.1.0",
+        "schemaVersion": "1.2.0",
         "type": "Text",
         "props": { "content": "Hello" }
       }
@@ -152,7 +152,7 @@ struct JSONViewTests {
   func testJSONViewValidVersion() {
     let json = """
       {
-        "schemaVersion": "1.1.0",
+        "schemaVersion": "1.2.0",
         "type": "Text",
         "props": { "content": "Hello" }
       }
