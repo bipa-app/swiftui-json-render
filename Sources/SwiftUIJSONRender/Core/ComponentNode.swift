@@ -252,16 +252,35 @@ extension ComponentNode {
   /// Creates a `ComponentNode` from a JSON string.
   /// - Parameter json: A JSON string representing a component node.
   /// - Returns: A decoded `ComponentNode`, or `nil` if parsing fails.
+  ///
+  /// If standard decoding fails, applies ``JSONSanitizer`` to repair common
+  /// LLM-generated malformations (smart quotes, trailing commas, unescaped quotes)
+  /// and retries.
   public static func from(json: String) -> ComponentNode? {
     guard let data = json.data(using: .utf8) else { return nil }
-    return try? JSONDecoder().decode(ComponentNode.self, from: data)
+    if let node = try? JSONDecoder().decode(ComponentNode.self, from: data) {
+      return node
+    }
+    // Fallback: sanitize and retry
+    let sanitized = JSONSanitizer.sanitize(json)
+    guard sanitized != json, let sanitizedData = sanitized.data(using: .utf8) else { return nil }
+    return try? JSONDecoder().decode(ComponentNode.self, from: sanitizedData)
   }
 
   /// Creates a `ComponentNode` from JSON data.
   /// - Parameter data: JSON data representing a component node.
   /// - Returns: A decoded `ComponentNode`, or `nil` if parsing fails.
+  ///
+  /// If standard decoding fails, applies ``JSONSanitizer`` and retries.
   public static func from(data: Data) -> ComponentNode? {
-    try? JSONDecoder().decode(ComponentNode.self, from: data)
+    if let node = try? JSONDecoder().decode(ComponentNode.self, from: data) {
+      return node
+    }
+    // Fallback: sanitize and retry
+    guard let string = String(data: data, encoding: .utf8) else { return nil }
+    let sanitized = JSONSanitizer.sanitize(string)
+    guard sanitized != string, let sanitizedData = sanitized.data(using: .utf8) else { return nil }
+    return try? JSONDecoder().decode(ComponentNode.self, from: sanitizedData)
   }
 }
 

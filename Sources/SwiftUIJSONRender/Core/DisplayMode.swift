@@ -58,10 +58,18 @@ public struct RenderRequest: Sendable, Equatable {
   /// }
   /// ```
   public static func from(json: String) -> RenderRequest? {
-    guard let data = json.data(using: .utf8),
-          let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
-    else { return nil }
+    guard let data = json.data(using: .utf8) else { return nil }
 
+    if let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+      return from(dictionary: obj)
+    }
+
+    // Fallback: sanitize the outer JSON and retry
+    let sanitized = JSONSanitizer.sanitize(json)
+    guard sanitized != json,
+          let sanitizedData = sanitized.data(using: .utf8),
+          let obj = try? JSONSerialization.jsonObject(with: sanitizedData) as? [String: Any]
+    else { return nil }
     return from(dictionary: obj)
   }
 
@@ -71,12 +79,24 @@ public struct RenderRequest: Sendable, Equatable {
     let display = DisplayMode(rawValue: displayStr) ?? .inline
 
     // Parse root component node
-    guard let rootObj = obj["root"],
-          let rootData = try? JSONSerialization.data(withJSONObject: rootObj),
-          let root = ComponentNode.from(data: rootData)
-    else {
+    let root: ComponentNode
+    if let rootObj = obj["root"] {
+      if let rootString = rootObj as? String {
+        // root is a double-encoded JSON string — parse it
+        guard let node = ComponentNode.from(json: rootString) else { return nil }
+        root = node
+      } else if JSONSerialization.isValidJSONObject(rootObj),
+                let rootData = try? JSONSerialization.data(withJSONObject: rootObj),
+                let node = ComponentNode.from(data: rootData) {
+        // root is a JSON object
+        root = node
+      } else {
+        return nil
+      }
+    } else {
       // Fallback: treat the entire object as a component node (backward compat)
-      guard let data = try? JSONSerialization.data(withJSONObject: obj),
+      guard JSONSerialization.isValidJSONObject(obj),
+            let data = try? JSONSerialization.data(withJSONObject: obj),
             let node = ComponentNode.from(data: data)
       else { return nil }
       return RenderRequest(display: .inline, document: nil, root: node)
